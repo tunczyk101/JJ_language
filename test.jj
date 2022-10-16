@@ -1,4 +1,28 @@
 // Parser: ANTLR
+// ------------------------------------------------------------------------------------------------
+// Głównym konceptem języka jest zachowanie "Single exit-point rule". 
+// Generalnie zazwyczaj w językach strukturalnych stosowanie sie do tej regóły moze byc problematyczne
+// 
+// int f(int* x) {                                      |    |  int f(int* x) {    
+//     if (x == NULL) return -1;                        |    |      int ret;
+//     // ... pozostałe obliczenia gdy x nie jest NULL  | VS |      if (x == NULL) ret = -1;
+//     return g(h);                                     |    |      else { ... }
+// }                                                    |    |      return ret; 
+//                                                      |    |  }
+// 
+// ale chcieliśmy znaleść takie połączenie które pozwoli zachować strukturalność kodu, czytelnośc i pozowoli stosować zasade SEP.
+// Dlatego zdecydowaliśmy się użyć konceptu znanego z programowania funkcyjnego - Function Guards znanych z np: Haskella czy Elixira
+// ------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
 
 func fib
 with x 
