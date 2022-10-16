@@ -2,22 +2,17 @@
 
 func fib
 with x 
-returns fib(x-1) + fib(x-2)    // w wymaganiach jst rekurencja
+returns fib(x-1) + fib(x-2)    // rekurencja
 
 func fib
 with x
-when x == 0 // jedyny ficzer jezyka zeby sie nie przyjebal GUARDY na funkcje
-returns 0 // Single exit point zeby sie czyms wyroznial jezyk a raczej jest ez do zrobienia
+when x == 0 // GUARDY na funkcje
+returns 0 // Single exit point
 
 func fib
 with x
 when x == 1
 returns 1
-
-func fib 
-with x
-when x == 1 || x == 0 // wykonywane proirytetowo bo jest ostatnie wiec przyslania te gorne
-returns 123 
 
 func func_with_flows
 {
@@ -55,7 +50,7 @@ func main  // <<-- ENTRY_POINT
     println( fib(y) );
 
     // x = 12 - error bo const
-    // y = 12 - git bo mutable (zajebane z rust xD)
+    // y = 12 - ok bo mutable
 } 
 returns fib(x)
 
