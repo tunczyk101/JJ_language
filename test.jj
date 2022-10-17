@@ -85,3 +85,11 @@ func types
     let b { 1.0 };  // FLOAT
     let c { true }; // BOOL
 } 
+
+func g
+with x
+{
+    ley y { fib(x) };
+    let z { y * 2};
+}
+returns z
