@@ -3,6 +3,7 @@
 // Głównym konceptem języka jest zachowanie "Single exit-point rule". 
 // Generalnie zazwyczaj w językach strukturalnych stosowanie sie do tej regóły moze byc problematyczne
 // 
+// W C:
 // int f(int* x) {                                      |    |  int f(int* x) {    
 //     if (x == NULL) return -1;                        |    |      int ret;
 //     // ... pozostałe obliczenia gdy x nie jest NULL  | VS |      if (x == NULL) ret = -1;
