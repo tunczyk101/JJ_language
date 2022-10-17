@@ -47,7 +47,7 @@ func func_with_flows
         println(xd); 
     }
 
-    mut let mutable_var { 0 }; 
+    mut let mutable_var { 1 }; 
     while( mutable_var < 10 * xd ) 
     {
         mutable_var = mutable_var * xd;
