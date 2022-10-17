@@ -89,7 +89,7 @@ func types
 func g
 with x
 {
-    ley y { fib(x) };
+    let y { fib(x) };
     let z { y * 2};
 }
 returns z
