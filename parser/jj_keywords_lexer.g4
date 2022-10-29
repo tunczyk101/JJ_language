@@ -21,6 +21,10 @@ END_OF_INSTRUCTION
 	: ';'
 	;
 
+COMMA_TOKEN
+	: ','
+	;
+
 BLOCK_BEGIN
 	: '{'
 	;
@@ -72,8 +76,8 @@ WITH_DECL
 	: 'with'
 	;
 
-WHERE_DECL
-	: 'where'
+WHEN_DECL
+	: 'when'
 	;
 
 IF_DECL

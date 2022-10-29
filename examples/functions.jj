@@ -1,0 +1,34 @@
+// comments above function
+
+func fib
+with x 
+returns fib(x-1) + fib(x-2)    // recusion
+
+func fib
+with x
+when x == 0 // guards
+returns 0 // Single exit point
+
+// comments between function
+
+func fib
+with x
+when x == 1
+returns 1
+
+func pow
+with mut x
+{
+    x = x * x;
+}
+
+func add_and_save_to_second
+with x, mut y
+{
+    y = x + y;
+}
+
+func main  
+{
+    let x { fib(0) }; 
+} 

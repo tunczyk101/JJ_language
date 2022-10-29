@@ -24,11 +24,19 @@ function_main
 	;
 
 optinal_function_blocks
-	: arguments_block? COMMENT? where_block? COMMENT? structural_block? COMMENT? return_block?
+	: arguments_block? COMMENT? guard_block? COMMENT? structural_block? COMMENT? return_block?
+	;
+
+argument_decl
+	: MUTABLE_TOKEN? NAME
+	;
+
+additional_arguments_decl
+	: COMMENT? COMMA_TOKEN COMMENT? argument_decl
 	;
 
 arguments_block
-	: WITH_DECL
+	: WITH_DECL COMMENT? argument_decl additional_arguments_decl* COMMENT?
 	;
 
 structural_block
@@ -36,11 +44,11 @@ structural_block
 	;
 
 return_block
-	: RETURN_DECL COMMENT? (NAME | value)
+	: RETURN_DECL COMMENT? expresion
 	;
 
-where_block
-	: WHERE_DECL COMMENT? expresion
+guard_block
+	: WHEN_DECL COMMENT? expresion
 	;
 
 structural_line
@@ -66,20 +74,32 @@ expresion_in_parenthesis
 	: PARENTHESES_BEGIN expresion PARENTHESES_END
 	;
 
-identifier_or_expresion
+left_of_binary_operation
 	: identifier
 	| expresion_in_parenthesis
+	| function_call
+	;
+
+all_binary_operations
+	: ONLY_BINARY_OPERATIONS
+	| UNARY_OR_BINARY_OPERATIONS
+	;
+
+all_unary_operations
+	: ONLY_UNARY_OPERATIONS
+	| UNARY_OR_BINARY_OPERATIONS
 	;
 
 expresion
 	: identifier
 	| expresion_in_parenthesis
-	| (ONLY_UNARY_OPERATIONS | UNARY_OR_BINARY_OPERATIONS) expresion
-	| identifier_or_expresion
-	(
-		ONLY_BINARY_OPERATIONS
-		| UNARY_OR_BINARY_OPERATIONS
-	) expresion
+	| function_call
+	| all_unary_operations expresion
+	| left_of_binary_operation all_binary_operations expresion
+	;
+
+function_call
+	: NAME PARENTHESES_BEGIN expresion PARENTHESES_END
 	;
 
 identifier
