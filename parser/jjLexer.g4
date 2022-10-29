@@ -1,4 +1,4 @@
-lexer grammar jj_lexer
+lexer grammar jjLexer
 	;
 
 import jj_names_lexer, jj_value_types_lexer

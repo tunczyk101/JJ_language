@@ -1,2 +1,2 @@
-antlr4 -Dlanguage=Python3 -o out jj_lexer.g4 
-antlr4 -Dlanguage=Python3 -o out jj.g4
+antlr4 -Dlanguage=Python3 -o out jjLexer.g4 
+antlr4 -Dlanguage=Python3 -o out jjParser.g4

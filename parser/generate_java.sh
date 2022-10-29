@@ -1,2 +1,2 @@
-antlr4 -o out_java jj_lexer.g4 
-antlr4 -o out_java jj.g4
+antlr4 -o out_java jjLexer.g4 
+antlr4 -o out_java jjParser.g4

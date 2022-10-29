@@ -1,8 +1,9 @@
-file="$1"
+token="$1"
+file="$2"
 
 if ! command -v grun &> /dev/null
 then
-    alias grun='java -Xmx500M -cp "/usr/local/lib/antlr-4.11.1-complete.jar:$CLASSPATH" org.antlr.v4.gui.TestRig' 
+    alias grun='java org.antlr.v4.gui.TestRig'
 fi
 
 
@@ -13,4 +14,4 @@ cd out_java
 echo "Compiling parser..."
 javac jj*.java
 echo "Running parser..."
-grun jj prog -tree < ../../"$file"
+grun jj $token -tree < ../../"$file"

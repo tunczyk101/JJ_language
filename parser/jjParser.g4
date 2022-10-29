@@ -1,9 +1,9 @@
-parser grammar jj
+parser grammar jjParser
 	;
 
 options
 {
-	tokenVocab= jj_lexer;
+	tokenVocab= jjLexer;
 }
 
 prog
@@ -41,7 +41,7 @@ where_block
 structural_line
 	: structural_line_instruction* COMMENT?
 	| COMMENT
-	| // empty
+	| // empty 
 	;
 
 variable_declaration
