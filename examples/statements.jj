@@ -1,0 +1,27 @@
+func main
+{
+    let xd { 123 }; 
+    if( xd > 10 )
+    {
+        println(xd); 
+    }
+    else {
+         println( -1 ); 
+    }
+
+    if( xd > 100 )
+    {
+        println(xd); 
+    }
+
+    let mut mutable_var { 1 }; 
+    while( mutable_var < 10 * xd ) 
+    {
+        mutable_var = mutable_var * xd;
+    }
+
+    for( let mut i { 0 }; i < 0; i = i + 1 )
+    {
+         //mutable_var = mutable_var - xd;
+    }
+}

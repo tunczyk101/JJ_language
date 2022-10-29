@@ -60,8 +60,20 @@ variable_declaration
 	: VARIABLE_TOKEN MUTABLE_TOKEN? NAME BLOCK_BEGIN expresion BLOCK_END
 	;
 
-structural_line_instruction
+instruction_line
 	: instruction? END_OF_INSTRUCTION
+	;
+
+structural_line_instruction
+	: instruction_line
+	| statement
+	| structural_block
+	;
+
+statement
+	: while_statement
+	| if_statement
+	| for_statement
 	;
 
 instruction
@@ -129,8 +141,8 @@ while_statement
 	;
 
 for_statement
-	: FOR_DECL PARENTHESES_BEGIN structural_line_instruction structural_line_instruction
-		structural_line_instruction PARENTHESES_END structural_block
+	: FOR_DECL PARENTHESES_BEGIN instruction_line instruction_line instruction PARENTHESES_END
+		structural_block
 	;
 
 assignmnet_statement
