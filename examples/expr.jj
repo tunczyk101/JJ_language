@@ -2,13 +2,19 @@ func main
 {
     // value types
     let a { 0 }; // INT
-    let b { -420 }; // INT negative
+    let mut b { -420 }; // INT negative
     let c { +3 }; // INT positive
     let d { 1.0 }; // FLOAT
-    let e { -1.0 }; // FLOAT negative
+    let mut e { -1.0 }; // FLOAT negative
     let f { +13.6 }; // FLOAT positive
     let g { true }; // bool - true
-    let h { false }; // bool - false
+    let mut h { false }; // bool - false
     let i { a }; //  copy
     let i { a + 10 * (2 + f) }; //  value of expr
+
+    // assigments
+    b = 1;
+    e = 1.0;
+    h = true;
+
 }

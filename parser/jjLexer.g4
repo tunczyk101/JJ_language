@@ -56,6 +56,10 @@ BIN_OPERATION_TOKEN
 	| '&&'
 	;
 
+ASSIGNMENT_TOKEN
+	: '='
+	;
+
 RETURN_DECL
 	: 'returns'
 	;

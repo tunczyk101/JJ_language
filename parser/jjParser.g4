@@ -58,6 +58,7 @@ structural_line_instruction
 
 instruction
 	: variable_declaration
+	| assignmnet_statement
 	| expresion
 	;
 
@@ -100,4 +101,8 @@ while_statement
 for_statement
 	: FOR_DECL PARENTHESES_BEGIN structural_line_instruction structural_line_instruction
 		structural_line_instruction PARENTHESES_END structural_block
+	;
+
+assignmnet_statement
+	: NAME ASSIGNMENT_TOKEN expresion
 	;
