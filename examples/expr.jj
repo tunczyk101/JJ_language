@@ -17,4 +17,11 @@ func main
     e = 1.0;
     h = true;
 
+    // some operations
+    b = b + 1 * (a * (2 + 3) + 4) - 5;
+    h = x && (x || !false);
+    e = e * 2.0;
+    e = -e;
+
+
 }

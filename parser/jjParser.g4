@@ -66,10 +66,20 @@ expresion_in_parenthesis
 	: PARENTHESES_BEGIN expresion PARENTHESES_END
 	;
 
+identifier_or_expresion
+	: identifier
+	| expresion_in_parenthesis
+	;
+
 expresion
 	: identifier
 	| expresion_in_parenthesis
-	| (identifier | expresion_in_parenthesis) BIN_OPERATION_TOKEN expresion
+	| (ONLY_UNARY_OPERATIONS | UNARY_OR_BINARY_OPERATIONS) expresion
+	| identifier_or_expresion
+	(
+		ONLY_BINARY_OPERATIONS
+		| UNARY_OR_BINARY_OPERATIONS
+	) expresion
 	;
 
 identifier

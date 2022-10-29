@@ -2,12 +2,7 @@ lexer grammar jj_value_types_lexer
 	;
 
 NUMBER_TYPE
-	: NUMBER_SIGN? INT ('.' INT)?
-	;
-
-fragment NUMBER_SIGN
-	: '-'
-	| '+'
+	: INT ('.' INT)?
 	;
 
 fragment DIGIT
