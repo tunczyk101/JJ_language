@@ -1,7 +1,7 @@
 lexer grammar jj_value_types_lexer
 	;
 
-NUMBER
+NUMBER_TYPE
 	: NUMBER_SIGN? (INT | FLOAT)
 	;
 

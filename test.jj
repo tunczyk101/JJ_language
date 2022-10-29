@@ -19,12 +19,6 @@
 
 
 
-
-
-
-
-
-
 func fib
 with x 
 returns fib(x-1) + fib(x-2)    // rekurencja
@@ -50,20 +44,20 @@ func func_with_flows
     mut let mutable_var { 1 }; 
     while( mutable_var < 10 * xd ) 
     {
-        mutable_var = mutable_var * xd;
+        //mutable_var = mutable_var * xd;
     }
 
-    for( mut let i = 0; i < 0; i = i + 1 )
-    {
-        mutable_var = mutable_var - xd;
-    }
+    // for( mut let i { 0 }; i < 0; i = i + 1 )
+    // {
+    //     //mutable_var = mutable_var - xd;
+    // }
 }
 
 func logic
 {
     mut let x { true };
-    x = !x;
-    x = x && (x || !false);
+    // x = !x;
+    // x = x && (x || !false);
 }
 returns x
 

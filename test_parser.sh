@@ -14,4 +14,4 @@ cd out_java
 echo "Compiling parser..."
 javac jj*.java
 echo "Running parser..."
-grun jj $token -tree < ../../"$file"
+grun jj $token -gui < ../../"$file"

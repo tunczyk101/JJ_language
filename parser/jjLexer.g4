@@ -89,11 +89,11 @@ COMMENT_START
 	;
 // -----------------------------------------------------------------------------
 COMMENT
-	: COMMENT_START ~[\r\n\f]*
+	: COMMENT_START ~[\r\n\f]* NEW_LINE
 	;
 
 WS
-	: [ \t]+ -> skip
+	: [ \t\r\n]+ -> skip
 	;
 
 NEW_LINE

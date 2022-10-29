@@ -7,19 +7,24 @@ options
 }
 
 prog
-	: function* function_main
+	: global_line* function_main COMMENT?
+	;
+
+global_line
+	: COMMENT
+	| function
 	;
 
 function
-	: FUNC_DECL NAME optinal_function_blocks
+	: FUNC_DECL COMMENT? NAME COMMENT? optinal_function_blocks
 	;
 
 function_main
-	: FUNC_DECL MAIN_FUNC_NAME optinal_function_blocks
+	: FUNC_DECL COMMENT? MAIN_FUNC_NAME COMMENT? optinal_function_blocks
 	;
 
 optinal_function_blocks
-	: arguments_block? where_block? structural_block? return_block?
+	: arguments_block? COMMENT? where_block? COMMENT? structural_block? COMMENT? return_block?
 	;
 
 arguments_block
@@ -31,17 +36,17 @@ structural_block
 	;
 
 return_block
-	: RETURN_DECL (NAME | value)
+	: RETURN_DECL COMMENT? (NAME | value)
 	;
 
 where_block
-	: WHERE_DECL expresion
+	: WHERE_DECL COMMENT? expresion
 	;
 
 structural_line
 	: structural_line_instruction* COMMENT?
 	| COMMENT
-	| // empty 
+	| // empty - dunno if needed
 	;
 
 variable_declaration
@@ -73,7 +78,7 @@ identifier
 	;
 
 value
-	: NUMBER
+	: NUMBER_TYPE
 	| BOOL
 	;
 
