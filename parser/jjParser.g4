@@ -7,7 +7,7 @@ options
 }
 
 prog
-	: global_line* function_main COMMENT?
+	: global_line* function_main
 	;
 
 global_line
@@ -20,7 +20,7 @@ function
 	;
 
 function_main
-	: FUNC_DECL COMMENT? MAIN_FUNC_NAME COMMENT? optinal_function_blocks
+	: FUNC_DECL COMMENT? MAIN_FUNC_NAME COMMENT? structural_block? COMMENT?
 	;
 
 optinal_function_blocks
@@ -32,7 +32,7 @@ arguments_block
 	;
 
 structural_block
-	: BLOCK_BEGIN structural_line_instruction* BLOCK_END
+	: BLOCK_BEGIN structural_line* BLOCK_END
 	;
 
 return_block
@@ -44,9 +44,8 @@ where_block
 	;
 
 structural_line
-	: structural_line_instruction* COMMENT?
+	: structural_line_instruction+ COMMENT?
 	| COMMENT
-	| // empty - dunno if needed
 	;
 
 variable_declaration
@@ -73,8 +72,8 @@ expresion
 	;
 
 identifier
-	: NAME
-	| value
+	: value
+	| NAME
 	;
 
 value

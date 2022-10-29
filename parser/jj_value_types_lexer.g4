@@ -2,24 +2,20 @@ lexer grammar jj_value_types_lexer
 	;
 
 NUMBER_TYPE
-	: NUMBER_SIGN? (INT | FLOAT)
+	: NUMBER_SIGN? INT ('.' INT)?
 	;
 
-NUMBER_SIGN
+fragment NUMBER_SIGN
 	: '-'
 	| '+'
 	;
 
-DIGIT
-	: [0-9]
+fragment DIGIT
+	: '0' ..'9'
 	;
 
-INT
+fragment INT
 	: DIGIT+
-	;
-
-FLOAT
-	: INT '.' INT
 	;
 
 BOOL
