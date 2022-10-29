@@ -64,6 +64,10 @@ WITH_DECL
 	: 'with'
 	;
 
+WHERE_DECL
+	: 'where'
+	;
+
 COMMENT_START
 	: '//'
 	;

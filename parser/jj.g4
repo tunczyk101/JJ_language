@@ -19,7 +19,7 @@ function_main
 	;
 
 optinal_function_blocks
-	: arguments_block? structural_block? return_block?
+	: arguments_block? where_block? structural_block? return_block?
 	;
 
 arguments_block
@@ -32,6 +32,10 @@ structural_block
 
 return_block
 	: RETURN_DECL (NAME | value)
+	;
+
+where_block
+	: WHERE_DECL expresion
 	;
 
 structural_line
