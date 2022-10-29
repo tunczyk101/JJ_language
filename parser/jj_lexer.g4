@@ -32,11 +32,11 @@ BLOCK_END
 	: '}'
 	;
 
-NESTED_EXPR_BEGIN
+PARENTHESES_BEGIN
 	: '('
 	;
 
-NESTED_EXPR_END
+PARENTHESES_END
 	: ')'
 	;
 
@@ -66,6 +66,22 @@ WITH_DECL
 
 WHERE_DECL
 	: 'where'
+	;
+
+IF_DECL
+	: 'if'
+	;
+
+ELSE_DECL
+	: 'else'
+	;
+
+WHILE_DECL
+	: 'while'
+	;
+
+FOR_DECL
+	: 'for'
 	;
 
 COMMENT_START

@@ -57,10 +57,14 @@ instruction
 	| expresion
 	;
 
+expresion_in_parenthesis
+	: PARENTHESES_BEGIN expresion PARENTHESES_END
+	;
+
 expresion
 	: identifier
-	| NESTED_EXPR_BEGIN expresion NESTED_EXPR_END
-	| (identifier | NESTED_EXPR_BEGIN expresion NESTED_EXPR_END) BIN_OPERATION_TOKEN expresion
+	| expresion_in_parenthesis
+	| (identifier | expresion_in_parenthesis) BIN_OPERATION_TOKEN expresion
 	;
 
 identifier
@@ -71,4 +75,25 @@ identifier
 value
 	: NUMBER
 	| BOOL
+	;
+
+if_statement_start
+	: IF_DECL expresion_in_parenthesis
+	;
+
+if_statement
+	: if_statement_start structural_block else_statement?
+	;
+
+else_statement
+	: ELSE_DECL if_statement_start? structural_block
+	;
+
+while_statement
+	: WHILE_DECL expresion_in_parenthesis structural_block
+	;
+
+for_statement
+	: FOR_DECL PARENTHESES_BEGIN structural_line_instruction structural_line_instruction
+		structural_line_instruction PARENTHESES_END structural_block
 	;

@@ -16,7 +16,6 @@ class jjListener(ParseTreeListener):
     def exitProg(self, ctx:jj.ProgContext):
         pass
 
-
     # Enter a parse tree produced by jj#function.
     def enterFunction(self, ctx:jj.FunctionContext):
         pass
@@ -71,6 +70,15 @@ class jjListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by jj#where_block.
+    def enterWhere_block(self, ctx:jj.Where_blockContext):
+        pass
+
+    # Exit a parse tree produced by jj#where_block.
+    def exitWhere_block(self, ctx:jj.Where_blockContext):
+        pass
+
+
     # Enter a parse tree produced by jj#structural_line.
     def enterStructural_line(self, ctx:jj.Structural_lineContext):
         pass
@@ -107,6 +115,15 @@ class jjListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by jj#expresion_in_parenthesis.
+    def enterExpresion_in_parenthesis(self, ctx:jj.Expresion_in_parenthesisContext):
+        pass
+
+    # Exit a parse tree produced by jj#expresion_in_parenthesis.
+    def exitExpresion_in_parenthesis(self, ctx:jj.Expresion_in_parenthesisContext):
+        pass
+
+
     # Enter a parse tree produced by jj#expresion.
     def enterExpresion(self, ctx:jj.ExpresionContext):
         pass
@@ -131,6 +148,51 @@ class jjListener(ParseTreeListener):
 
     # Exit a parse tree produced by jj#value.
     def exitValue(self, ctx:jj.ValueContext):
+        pass
+
+
+    # Enter a parse tree produced by jj#if_statement_start.
+    def enterIf_statement_start(self, ctx:jj.If_statement_startContext):
+        pass
+
+    # Exit a parse tree produced by jj#if_statement_start.
+    def exitIf_statement_start(self, ctx:jj.If_statement_startContext):
+        pass
+
+
+    # Enter a parse tree produced by jj#if_statement.
+    def enterIf_statement(self, ctx:jj.If_statementContext):
+        pass
+
+    # Exit a parse tree produced by jj#if_statement.
+    def exitIf_statement(self, ctx:jj.If_statementContext):
+        pass
+
+
+    # Enter a parse tree produced by jj#else_statement.
+    def enterElse_statement(self, ctx:jj.Else_statementContext):
+        pass
+
+    # Exit a parse tree produced by jj#else_statement.
+    def exitElse_statement(self, ctx:jj.Else_statementContext):
+        pass
+
+
+    # Enter a parse tree produced by jj#while_statement.
+    def enterWhile_statement(self, ctx:jj.While_statementContext):
+        pass
+
+    # Exit a parse tree produced by jj#while_statement.
+    def exitWhile_statement(self, ctx:jj.While_statementContext):
+        pass
+
+
+    # Enter a parse tree produced by jj#for_statement.
+    def enterFor_statement(self, ctx:jj.For_statementContext):
+        pass
+
+    # Exit a parse tree produced by jj#for_statement.
+    def exitFor_statement(self, ctx:jj.For_statementContext):
         pass
 
 
