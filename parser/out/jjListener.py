@@ -10,10 +10,12 @@ class jjListener(ParseTreeListener):
 
     # Enter a parse tree produced by jj#prog.
     def enterProg(self, ctx:jj.ProgContext):
+        # print("prog", ctx)
         pass
 
     # Exit a parse tree produced by jj#prog.
     def exitProg(self, ctx:jj.ProgContext):
+        # print(ctx)
         pass
 
     # Enter a parse tree produced by jj#function.
@@ -94,6 +96,7 @@ class jjListener(ParseTreeListener):
 
     # Exit a parse tree produced by jj#variable_declaration.
     def exitVariable_declaration(self, ctx:jj.Variable_declarationContext):
+
         pass
 
 
@@ -139,7 +142,9 @@ class jjListener(ParseTreeListener):
 
     # Exit a parse tree produced by jj#identifier.
     def exitIdentifier(self, ctx:jj.IdentifierContext):
-        pass
+        value = self.getVar(ctx.getText())
+        self.stack.append(value)
+        # pass
 
 
     # Enter a parse tree produced by jj#value.
@@ -194,6 +199,13 @@ class jjListener(ParseTreeListener):
     # Exit a parse tree produced by jj#for_statement.
     def exitFor_statement(self, ctx:jj.For_statementContext):
         pass
+
+    def run(self, node):
+        print("run")
+        self.vars = {}
+        self.stack = []
+        self.functions = {}
+        ParseTreeWalker().walk(self, node)
 
 
 
