@@ -70,8 +70,11 @@ def serializedATN():
 class jj ( Parser ):
 
     grammarFileName = "jj.g4"
+    # a = serializedATN()
+    a = [chr(x) for x in serializedATN()]
+    # print(type(a[0]), a)
 
-    atn = ATNDeserializer().deserialize(serializedATN())
+    atn = ATNDeserializer().deserialize(a)
 
     decisionsToDFA = [ DFA(ds, i) for i, ds in enumerate(atn.decisionToState) ]
 

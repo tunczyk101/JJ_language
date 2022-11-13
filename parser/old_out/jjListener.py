@@ -10,8 +10,8 @@ class jjListener(ParseTreeListener):
 
     # Enter a parse tree produced by jj#prog.
     def enterProg(self, ctx:jj.ProgContext):
-        # print("prog", ctx)
-        pass
+        print("prog", ctx)
+        # pass
 
     # Exit a parse tree produced by jj#prog.
     def exitProg(self, ctx:jj.ProgContext):
