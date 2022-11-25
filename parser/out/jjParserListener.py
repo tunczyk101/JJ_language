@@ -7,6 +7,7 @@ else:
 
 # This class defines a complete listener for a parse tree produced by jjParser.
 class jjParserListener(ParseTreeListener):
+    functions_list = {}
 
     # Enter a parse tree produced by jjParser#prog.
     def enterProg(self, ctx:jjParser.ProgContext):
@@ -33,18 +34,34 @@ class jjParserListener(ParseTreeListener):
     # Enter a parse tree produced by jjParser#function.
     def enterFunction(self, ctx:jjParser.FunctionContext):
         print("FUNC " + ctx.getText())
+        
+        name = str(ctx.NAME())
+        if self.functions_list.get(name) == None:
+            self.functions_list.update({name: []})
+        else:
+            print("UPDATE F")
+
         pass
 
     # Exit a parse tree produced by jjParser#function.
     def exitFunction(self, ctx:jjParser.FunctionContext):
         print("END FUNC" + ctx.getText())
+        # if self.functions_list.get("main") != None:
+        #     print("!!!!!!!!!!!!!!!!!!! TYLKO JEDEN MAIN!!!")
+        #     exit(1)
+        # self.functions_list.update({"main": []})
         pass
 
 
     # Enter a parse tree produced by jjParser#function_main.
     def enterFunction_main(self, ctx:jjParser.Function_mainContext):
         print("MAIN  " + ctx.getText())
-        self.func = []
+        # print(self.functions_list.get("main"))
+        if self.functions_list.get("main") != None:
+            print("!!!!!!!!!!!!!!!!!!! TYLKO JEDEN MAIN!!!")
+            exit(1)
+        self.functions_list.update({"main": []})
+        # print(ctx.)
         pass
 
     # Exit a parse tree produced by jjParser#function_main.
