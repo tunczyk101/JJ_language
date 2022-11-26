@@ -111,7 +111,7 @@ expresion
 	;
 
 function_call
-	: NAME PARENTHESES_BEGIN expresion PARENTHESES_END
+	: NAME PARENTHESES_BEGIN expresion (COMMA_TOKEN expresion)* PARENTHESES_END
 	;
 
 identifier

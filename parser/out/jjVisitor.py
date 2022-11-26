@@ -20,6 +20,9 @@ class Variable:
     name: str
     value: Any 
 
+class STD_functions:
+    def println(args): print(' '.join(map(lambda x: str(x), args)))
+
 class jjVisitor(jjParserVisitor):
 
     def __init__(self):
@@ -33,6 +36,11 @@ class jjVisitor(jjParserVisitor):
 
         print(f"ERROR: variable '{name}' is not defined.")
         exit(0)
+
+    def get_std_fn(self, name):
+        match name:
+            case "println": return STD_functions.println
+        
 
     def visitStructural_block(self, ctx: jjParser.Structural_blockContext):
         self.variablesStack.append(None)
@@ -50,6 +58,13 @@ class jjVisitor(jjParserVisitor):
             value = self.visitExpresion(ctx.expresion())
         ))
         
+    def visitFunction_call(self, ctx: jjParser.Function_callContext):   
+        std_fn = self.get_std_fn(str(ctx.NAME()))
+        if(std_fn is not None):
+            std_fn([self.visitExpresion(child) for child in ctx.children if isinstance(child, jjParser.ExpresionContext)])
+
+        return super().visitFunction_call(ctx)
+
     def visitValue(self, ctx: jjParser.ValueContext):
         bool = ctx.BOOL()
         if bool is not None:
@@ -104,7 +119,7 @@ class jjVisitor(jjParserVisitor):
 
     def visitIdentifier(self, ctx: jjParser.IdentifierContext):
         name = ctx.NAME()
-        if(name is not None):
+        if name is not None:
             return self.getVariableValue(str(name))
 
         return self.visitValue(ctx.value())

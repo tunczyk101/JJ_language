@@ -270,8 +270,8 @@ class jjParserListener(ParseTreeListener):
         self.logger.log("ENTER FUNC CALL  " + ctx.getText())
         name = str(ctx.NAME())
         if self.functions_list.get(name) is None:
-            raise Exception("NIE ZADEKLROWANO FUNC: " + name)
-        pass
+            #raise Exception("NIE ZADEKLROWANO FUNC: " + name)
+            pass
 
     # Exit a parse tree produced by jjParser#function_call.
     def exitFunction_call(self, ctx: jjParser.Function_callContext):
