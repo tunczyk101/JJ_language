@@ -245,6 +245,12 @@ class jjParser ( Parser ):
             if hasattr( listener, "exitProg" ):
                 listener.exitProg(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitProg" ):
+                return visitor.visitProg(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -300,6 +306,12 @@ class jjParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitGlobal_line" ):
                 listener.exitGlobal_line(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitGlobal_line" ):
+                return visitor.visitGlobal_line(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -367,6 +379,12 @@ class jjParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitFunction" ):
                 listener.exitFunction(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitFunction" ):
+                return visitor.visitFunction(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -442,6 +460,12 @@ class jjParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitFunction_main" ):
                 listener.exitFunction_main(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitFunction_main" ):
+                return visitor.visitFunction_main(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -537,6 +561,12 @@ class jjParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitOptinal_function_blocks" ):
                 listener.exitOptinal_function_blocks(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitOptinal_function_blocks" ):
+                return visitor.visitOptinal_function_blocks(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -637,6 +667,12 @@ class jjParser ( Parser ):
             if hasattr( listener, "exitArgument_decl" ):
                 listener.exitArgument_decl(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitArgument_decl" ):
+                return visitor.visitArgument_decl(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -696,6 +732,12 @@ class jjParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitAdditional_arguments_decl" ):
                 listener.exitAdditional_arguments_decl(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitAdditional_arguments_decl" ):
+                return visitor.visitAdditional_arguments_decl(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -773,6 +815,12 @@ class jjParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitArguments_block" ):
                 listener.exitArguments_block(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitArguments_block" ):
+                return visitor.visitArguments_block(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -855,6 +903,12 @@ class jjParser ( Parser ):
             if hasattr( listener, "exitStructural_block" ):
                 listener.exitStructural_block(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitStructural_block" ):
+                return visitor.visitStructural_block(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -916,6 +970,12 @@ class jjParser ( Parser ):
             if hasattr( listener, "exitReturn_block" ):
                 listener.exitReturn_block(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitReturn_block" ):
+                return visitor.visitReturn_block(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -975,6 +1035,12 @@ class jjParser ( Parser ):
             if hasattr( listener, "exitGuard_block" ):
                 listener.exitGuard_block(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitGuard_block" ):
+                return visitor.visitGuard_block(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -1033,6 +1099,12 @@ class jjParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitStructural_line" ):
                 listener.exitStructural_line(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitStructural_line" ):
+                return visitor.visitStructural_line(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1124,6 +1196,12 @@ class jjParser ( Parser ):
             if hasattr( listener, "exitVariable_declaration" ):
                 listener.exitVariable_declaration(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitVariable_declaration" ):
+                return visitor.visitVariable_declaration(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -1186,6 +1264,12 @@ class jjParser ( Parser ):
             if hasattr( listener, "exitInstruction_line" ):
                 listener.exitInstruction_line(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitInstruction_line" ):
+                return visitor.visitInstruction_line(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -1244,6 +1328,12 @@ class jjParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitStructural_line_instruction" ):
                 listener.exitStructural_line_instruction(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitStructural_line_instruction" ):
+                return visitor.visitStructural_line_instruction(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1313,6 +1403,12 @@ class jjParser ( Parser ):
             if hasattr( listener, "exitStatement" ):
                 listener.exitStatement(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitStatement" ):
+                return visitor.visitStatement(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -1381,6 +1477,12 @@ class jjParser ( Parser ):
             if hasattr( listener, "exitInstruction" ):
                 listener.exitInstruction(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitInstruction" ):
+                return visitor.visitInstruction(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -1448,6 +1550,12 @@ class jjParser ( Parser ):
             if hasattr( listener, "exitExpresion_in_parenthesis" ):
                 listener.exitExpresion_in_parenthesis(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitExpresion_in_parenthesis" ):
+                return visitor.visitExpresion_in_parenthesis(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -1501,6 +1609,12 @@ class jjParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitLeft_of_binary_operation" ):
                 listener.exitLeft_of_binary_operation(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitLeft_of_binary_operation" ):
+                return visitor.visitLeft_of_binary_operation(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1565,6 +1679,12 @@ class jjParser ( Parser ):
             if hasattr( listener, "exitAll_binary_operations" ):
                 listener.exitAll_binary_operations(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitAll_binary_operations" ):
+                return visitor.visitAll_binary_operations(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -1614,6 +1734,12 @@ class jjParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitAll_unary_operations" ):
                 listener.exitAll_unary_operations(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitAll_unary_operations" ):
+                return visitor.visitAll_unary_operations(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1686,6 +1812,12 @@ class jjParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitExpresion" ):
                 listener.exitExpresion(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitExpresion" ):
+                return visitor.visitExpresion(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1775,6 +1907,12 @@ class jjParser ( Parser ):
             if hasattr( listener, "exitFunction_call" ):
                 listener.exitFunction_call(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitFunction_call" ):
+                return visitor.visitFunction_call(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -1825,6 +1963,12 @@ class jjParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitIdentifier" ):
                 listener.exitIdentifier(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitIdentifier" ):
+                return visitor.visitIdentifier(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1883,6 +2027,12 @@ class jjParser ( Parser ):
             if hasattr( listener, "exitValue" ):
                 listener.exitValue(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitValue" ):
+                return visitor.visitValue(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -1933,6 +2083,12 @@ class jjParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitIf_statement_start" ):
                 listener.exitIf_statement_start(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitIf_statement_start" ):
+                return visitor.visitIf_statement_start(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1985,6 +2141,12 @@ class jjParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitIf_statement" ):
                 listener.exitIf_statement(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitIf_statement" ):
+                return visitor.visitIf_statement(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -2046,6 +2208,12 @@ class jjParser ( Parser ):
             if hasattr( listener, "exitElse_statement" ):
                 listener.exitElse_statement(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitElse_statement" ):
+                return visitor.visitElse_statement(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -2105,6 +2273,12 @@ class jjParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitWhile_statement" ):
                 listener.exitWhile_statement(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitWhile_statement" ):
+                return visitor.visitWhile_statement(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -2172,6 +2346,12 @@ class jjParser ( Parser ):
             if hasattr( listener, "exitFor_statement" ):
                 listener.exitFor_statement(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitFor_statement" ):
+                return visitor.visitFor_statement(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -2231,6 +2411,12 @@ class jjParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitAssignmnet_statement" ):
                 listener.exitAssignmnet_statement(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitAssignmnet_statement" ):
+                return visitor.visitAssignmnet_statement(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
