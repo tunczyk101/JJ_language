@@ -30,7 +30,7 @@ class jjVisitor(jjParserVisitor):
         self.variablesStack = collections.deque()
 
     def getVariableValue(self, name):
-        for var in self.variablesStack:
+        for var in reversed(self.variablesStack):
             if var is not None and var.name == name:
                 return var.value
 
@@ -112,6 +112,25 @@ class jjVisitor(jjParserVisitor):
             return self.visitAll_unary_operations(unary)(self.visitExpresion(ctx.expresion()))
 
         return super().visitExpresion(ctx)
+
+    def visitIf_statement_start(self, ctx: jjParser.If_statement_startContext):
+        return self.visitExpresion_in_parenthesis(ctx.expresion_in_parenthesis())
+
+    def visitIf_statement(self, ctx: jjParser.If_statementContext):
+        if self.visitIf_statement_start(ctx.if_statement_start()):
+            self.visitStructural_block(ctx.structural_block())
+        else:
+            else_stm = ctx.else_statement()
+            if else_stm is not None:
+                self.visitElse_statement(else_stm)
+
+    def visitElse_statement(self, ctx: jjParser.Else_statementContext):
+        if_smt = ctx.if_statement()
+        if if_smt is not None:
+            self.visitIf_statement(if_smt)
+        else:
+            self.visitStructural_block(ctx.structural_block())
+
 
     def visitChildren(self, node):
         value = super().visitChildren(node)

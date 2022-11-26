@@ -133,7 +133,7 @@ if_statement
 	;
 
 else_statement
-	: ELSE_DECL if_statement_start? structural_block
+	: ELSE_DECL (if_statement | structural_block)
 	;
 
 while_statement

@@ -10,16 +10,19 @@ func main
     let g { true }; // bool - true
     let mut h { false }; // bool - false
     let i { a }; //  copy
-    let i { a + 10 * (2 + f) }; //  value of expr
+    let j { a + 10 * (2 + f) }; //  value of expr
 
-    // assigments
-    b = 1;
-    e = 1.0;
-    h = true;
+    println(j);
 
-    // some operations
-    b = b + 1 * (a * (2 + 3) + 4) - 5;
-    h = x && (x || !false);
-    e = e * 2.0;
-    e = -e;
+    if(!true) {
+        println(j);
+    } else if (a != i) {
+        println(123);
+    } else {
+        let j { 1 };
+        println(j, 2, 3, 4, 5);
+    }
+
+    println(j);
+
 }
