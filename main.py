@@ -11,7 +11,7 @@ def main(argv):
     stream = CommonTokenStream(lexer)
     parser = jjParser(stream)
     tree = parser.prog()
-    listener = jjParserListener()
+    listener = jjParserListener(verbose=True)
     listener.run(tree)
 
 
