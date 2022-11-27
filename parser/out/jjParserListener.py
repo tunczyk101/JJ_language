@@ -14,6 +14,8 @@ else:
 class jjParserListener(ParseTreeListener):
     functions_list = {}
     variables = {}
+    statements = {}
+    standard_func = {"println": []}
 
     def __init__(self, verbose = False):
         super().__init__()
@@ -21,24 +23,19 @@ class jjParserListener(ParseTreeListener):
 
     # Enter a parse tree produced by jjParser#prog.
     def enterProg(self, ctx: jjParser.ProgContext):
-        self.logger.log("Enter prog")
         pass
 
     # Exit a parse tree produced by jjParser#prog.
     def exitProg(self, ctx: jjParser.ProgContext):
-        self.logger.log("Exit prog")
         self.logger.log(self.functions_list)
         self.logger.log(self.variables)
-        pass
 
     # Enter a parse tree produced by jjParser#global_line.
     def enterGlobal_line(self, ctx: jjParser.Global_lineContext):
-        self.logger.log("Global line")
         pass
 
     # Exit a parse tree produced by jjParser#global_line.
     def exitGlobal_line(self, ctx: jjParser.Global_lineContext):
-        self.logger.log("out of global line")
         pass
 
     # Enter a parse tree produced by jjParser#function.
@@ -47,6 +44,7 @@ class jjParserListener(ParseTreeListener):
         name = str(ctx.NAME())
         if self.functions_list.get(name) is None:
             self.functions_list.update({name: []})
+            self.statements.update({ctx: []})
         else:
             self.logger.log("UPDATE F")
 
@@ -54,43 +52,38 @@ class jjParserListener(ParseTreeListener):
     def exitFunction(self, ctx: jjParser.FunctionContext):
         self.logger.log("END FUNC  " + str(ctx.NAME()))
         self.logger.log()
-        self.logger.log(self.variables)
-        self.logger.log()
         self.logger.log("$$$$$$$$$$$$$ CLEAR")
-        self.vars.clear()
-        pass
+        self.variables.clear()
 
     # Enter a parse tree produced by jjParser#function_main.
     def enterFunction_main(self, ctx: jjParser.Function_mainContext):
-        self.logger.log("MAIN  " + ctx.getText())
-        # self.logger.log(self.functions_list.get("main"))
         if self.functions_list.get("main") != None:
             self.logger.log("!!!!!!!!!!!!!!!!!!! TYLKO JEDEN MAIN!!!")
-            # exit(1)
+            exit(1)
         self.functions_list.update({"main": []})
-        # self.logger.log(ctx.)
+        self.statements.update({ctx: []})
         pass
 
     # Exit a parse tree produced by jjParser#function_main.
     def exitFunction_main(self, ctx: jjParser.Function_mainContext):
-        self.logger.log("OUT MAIN")
         self.variables.clear()
         pass
 
     # Enter a parse tree produced by jjParser#optinal_function_blocks.
     def enterOptinal_function_blocks(self, ctx: jjParser.Optinal_function_blocksContext):
-        self.logger.log("OPTIONAL FUNC BLOCKS  " + ctx.getText())
         pass
 
     # Exit a parse tree produced by jjParser#optinal_function_blocks.
     def exitOptinal_function_blocks(self, ctx: jjParser.Optinal_function_blocksContext):
-        self.logger.log("END OPTIONAL FUNC BLOCKS  " + ctx.getText())
         pass
 
     # Enter a parse tree produced by jjParser#argument_decl.
     def enterArgument_decl(self, ctx: jjParser.Argument_declContext):
         self.logger.log("ENTER ARG DECL" + ctx.getText())
-        self.variables.update({str(ctx.NAME()): (ctx.MUTABLE_TOKEN() is not None)})
+        name = str(ctx.NAME())
+        if self.variables.get(name) is not None:
+            raise Exception("VAR " + name + " ALREADY EXIST")
+        self.variables.update({name: (ctx.MUTABLE_TOKEN() is not None)})
         pass
 
     # Exit a parse tree produced by jjParser#argument_decl.
@@ -120,12 +113,10 @@ class jjParserListener(ParseTreeListener):
 
     # Enter a parse tree produced by jjParser#structural_block.
     def enterStructural_block(self, ctx: jjParser.Structural_blockContext):
-        self.logger.log("ENTER STRUCTURAL BLOCK  " + ctx.getText())
         pass
 
     # Exit a parse tree produced by jjParser#structural_block.
     def exitStructural_block(self, ctx: jjParser.Structural_blockContext):
-        self.logger.log("END STRUCTURAL BLOCK  " + ctx.getText())
         pass
 
     # Enter a parse tree produced by jjParser#return_block.
@@ -150,12 +141,10 @@ class jjParserListener(ParseTreeListener):
 
     # Enter a parse tree produced by jjParser#structural_line.
     def enterStructural_line(self, ctx: jjParser.Structural_lineContext):
-        self.logger.log("ENTER STRUCT LINE  " + ctx.getText())
         pass
 
     # Exit a parse tree produced by jjParser#structural_line.
     def exitStructural_line(self, ctx: jjParser.Structural_lineContext):
-        self.logger.log("END STRUCT LINE  " + ctx.getText())
         pass
 
     # Enter a parse tree produced by jjParser#variable_declaration.
@@ -167,7 +156,7 @@ class jjParserListener(ParseTreeListener):
             self.logger.log("!!!!! PONOWNA DEKLARACJA ZMIENNEJ: " + name)
             # exit(1)
         self.variables.update({name: (ctx.MUTABLE_TOKEN() is not None)})
-
+        self.statements[list(self.statements.keys())[-1]].append(name)
         pass
 
     # Exit a parse tree produced by jjParser#variable_declaration.
@@ -177,32 +166,26 @@ class jjParserListener(ParseTreeListener):
 
     # Enter a parse tree produced by jjParser#instruction_line.
     def enterInstruction_line(self, ctx: jjParser.Instruction_lineContext):
-        self.logger.log("ENTER INSTRUCTION LINE  " + ctx.getText())
         pass
 
     # Exit a parse tree produced by jjParser#instruction_line.
     def exitInstruction_line(self, ctx: jjParser.Instruction_lineContext):
-        self.logger.log("END INSTRUCTION LINE  " + ctx.getText())
         pass
 
     # Enter a parse tree produced by jjParser#structural_line_instruction.
     def enterStructural_line_instruction(self, ctx: jjParser.Structural_line_instructionContext):
-        self.logger.log("ENTER STRUC LINE INSTRUCTION  " + ctx.getText())
         pass
 
     # Exit a parse tree produced by jjParser#structural_line_instruction.
     def exitStructural_line_instruction(self, ctx: jjParser.Structural_line_instructionContext):
-        self.logger.log("END STRUC LINE INSTRUCTION  " + ctx.getText())
         pass
 
     # Enter a parse tree produced by jjParser#statement.
     def enterStatement(self, ctx: jjParser.StatementContext):
-        self.logger.log("ENTER STATEMENT  " + ctx.getText())
         pass
 
     # Exit a parse tree produced by jjParser#statement.
     def exitStatement(self, ctx: jjParser.StatementContext):
-        self.logger.log("END STATEMENT  " + ctx.getText())
         pass
 
     # Enter a parse tree produced by jjParser#instruction.
@@ -212,12 +195,10 @@ class jjParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by jjParser#instruction.
     def exitInstruction(self, ctx: jjParser.InstructionContext):
-        self.logger.log("END INSTRUCTION  " + ctx.getText())
         pass
 
     # Enter a parse tree produced by jjParser#expresion_in_parenthesis.
     def enterExpresion_in_parenthesis(self, ctx: jjParser.Expresion_in_parenthesisContext):
-        self.logger.log("ENTER EXP IN PARENT  " + ctx.getText())
         pass
 
     # Exit a parse tree produced by jjParser#expresion_in_parenthesis.
@@ -269,9 +250,9 @@ class jjParserListener(ParseTreeListener):
     def enterFunction_call(self, ctx: jjParser.Function_callContext):
         self.logger.log("ENTER FUNC CALL  " + ctx.getText())
         name = str(ctx.NAME())
-        if self.functions_list.get(name) is None:
-            #raise Exception("NIE ZADEKLROWANO FUNC: " + name)
-            pass
+        if self.functions_list.get(name) is None and self.standard_func.get(name) is None:
+            raise Exception("NIE ZADEKLROWANO FUNC: " + name)
+        pass
 
     # Exit a parse tree produced by jjParser#function_call.
     def exitFunction_call(self, ctx: jjParser.Function_callContext):
@@ -280,12 +261,10 @@ class jjParserListener(ParseTreeListener):
 
     # Enter a parse tree produced by jjParser#identifier.
     def enterIdentifier(self, ctx: jjParser.IdentifierContext):
-        self.logger.log("ENTER ID  " + ctx.getText())
         pass
 
     # Exit a parse tree produced by jjParser#identifier.
     def exitIdentifier(self, ctx: jjParser.IdentifierContext):
-        self.logger.log("END ID  " + ctx.getText())
         pass
 
     # Enter a parse tree produced by jjParser#value.
@@ -310,42 +289,50 @@ class jjParserListener(ParseTreeListener):
 
     # Enter a parse tree produced by jjParser#if_statement.
     def enterIf_statement(self, ctx: jjParser.If_statementContext):
-        self.logger.log("ENTER IF STAT  " + ctx.getText())
+        self.statements.update({ctx: []})
         pass
 
     # Exit a parse tree produced by jjParser#if_statement.
     def exitIf_statement(self, ctx: jjParser.If_statementContext):
-        self.logger.log("END IF STAT  " + ctx.getText())
+        for v in self.statements[ctx]:
+            self.variables.pop(v)
+        self.statements.pop(ctx)
         pass
 
     # Enter a parse tree produced by jjParser#else_statement.
     def enterElse_statement(self, ctx: jjParser.Else_statementContext):
-        self.logger.log("ENTER ELSE STAT  " + ctx.getText())
+        self.statements.update({ctx: []})
         pass
 
     # Exit a parse tree produced by jjParser#else_statement.
     def exitElse_statement(self, ctx: jjParser.Else_statementContext):
-        self.logger.log("END ELSE STAT  " + ctx.getText())
+        for v in self.statements[ctx]:
+            self.variables.pop(v)
+        self.statements.pop(ctx)
         pass
 
     # Enter a parse tree produced by jjParser#while_statement.
     def enterWhile_statement(self, ctx: jjParser.While_statementContext):
-        self.logger.log("ENTER WHILE STAT  " + ctx.getText())
+        self.statements.update({ctx: []})
         pass
 
     # Exit a parse tree produced by jjParser#while_statement.
     def exitWhile_statement(self, ctx: jjParser.While_statementContext):
-        self.logger.log("END WHILE STAT  " + ctx.getText())
+        for v in self.statements[ctx]:
+            self.variables.pop(v)
+        self.statements.pop(ctx)
         pass
 
     # Enter a parse tree produced by jjParser#for_statement.
     def enterFor_statement(self, ctx: jjParser.For_statementContext):
-        self.logger.log("ENTER FOR STAT  " + ctx.getText())
+        self.statements.update({ctx: []})
         pass
 
     # Exit a parse tree produced by jjParser#for_statement.
     def exitFor_statement(self, ctx: jjParser.For_statementContext):
-        self.logger.log("END FOR STAT  " + ctx.getText())
+        for v in self.statements[ctx]:
+            self.variables.pop(v)
+        self.statements.pop(ctx)
         pass
 
     # Enter a parse tree produced by jjParser#assignmnet_statement.
