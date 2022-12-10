@@ -353,6 +353,23 @@ class jjParserListener(ParseTreeListener):
         self.logger.log("END ASSIG STAT  " + ctx.getText())
         pass
 
+    # Enter a parse tree produced by jjParser#left_of_cast_expr.
+    def enterLeft_of_cast_expr(self, ctx:jjParser.Left_of_cast_exprContext):
+        pass
+
+    # Exit a parse tree produced by jjParser#left_of_cast_expr.
+    def exitLeft_of_cast_expr(self, ctx:jjParser.Left_of_cast_exprContext):
+        pass
+
+    # Enter a parse tree produced by jjParser#cast_expression.
+    def enterCast_expression(self, ctx:jjParser.Cast_expressionContext):
+        pass
+
+    # Exit a parse tree produced by jjParser#cast_expression.
+    def exitCast_expression(self, ctx:jjParser.Cast_expressionContext):
+        pass
+
+
     def run(self, node):
         self.logger.log("run")
         self.vars = {}

@@ -99,6 +99,16 @@ class jjParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by jjParser#left_of_cast_expr.
+    def visitLeft_of_cast_expr(self, ctx:jjParser.Left_of_cast_exprContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by jjParser#cast_expression.
+    def visitCast_expression(self, ctx:jjParser.Cast_expressionContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by jjParser#left_of_binary_operation.
     def visitLeft_of_binary_operation(self, ctx:jjParser.Left_of_binary_operationContext):
         return self.visitChildren(ctx)
