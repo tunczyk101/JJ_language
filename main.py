@@ -5,17 +5,19 @@ from parser.out.jjLexer import jjLexer
 from parser.out.jjListener import jjListener
 from parser.out.jjVisitor import jjVisitor
 
+
 def check_initial_errors(program_path, verbose):
     data = FileStream(program_path)
     lexer = jjLexer(data)
     stream = CommonTokenStream(lexer)
     parser = jjParser(stream)
-    tree = parser.prog()
-
     listener = jjListener(verbose)
+
+    tree = parser.prog()
     listener.run(tree)
 
-def interprete(program_path):
+
+def interpret(program_path):
     data = FileStream(program_path)
     lexer = jjLexer(data)
     stream = CommonTokenStream(lexer)
@@ -27,10 +29,10 @@ def interprete(program_path):
 
 
 if __name__ == "__main__":
-    program_path = "examples/statements/for_loop.jj"
+    program_path = "examples/errors/doublemain.jj"
     # program_path = sys.argv[1]
     check_initial_errors(program_path, verbose=False)
     print("interprete")
-    interprete(program_path)
+    interpret(program_path)
 
     #main("examples/functions.jj")
