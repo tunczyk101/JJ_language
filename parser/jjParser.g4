@@ -86,8 +86,19 @@ expresion_in_parenthesis
 	: PARENTHESES_BEGIN expresion PARENTHESES_END
 	;
 
-left_of_binary_operation
+left_of_cast_expr
 	: identifier
+	| expresion_in_parenthesis
+	| function_call
+	;
+
+cast_expression
+	: left_of_cast_expr CAST_DECL TYPE_NAME
+	;
+
+left_of_binary_operation
+	: cast_expression
+	| identifier
 	| expresion_in_parenthesis
 	| function_call
 	;
@@ -103,7 +114,8 @@ all_unary_operations
 	;
 
 expresion
-	: identifier
+	: cast_expression
+	| identifier
 	| expresion_in_parenthesis
 	| function_call
 	| all_unary_operations expresion

@@ -194,4 +194,19 @@ class jjVisitor(jjParserVisitor):
             self.visitStructural_block(ctx.structural_block())
 
         self.stack_end_block()
+
+    def visitCast_expression(self, ctx: jjParser.Cast_expressionContext):
+        value = self.visitLeft_of_cast_expr(ctx.left_of_cast_expr())
+        type_name = str(ctx.TYPE_NAME())
+
+        token_name = lambda x: jjParser.literalNames[x].removeprefix("'").removesuffix("'")
+
+        if type_name == token_name(jjParser.INT_TYPE):
+            return int(value)
+        if type_name == token_name(jjParser.FLOAT_TYPE):
+            return float(value)
+        if type_name == token_name(jjParser.BOOL_TYPE):
+            return bool(value)
         
+        print("INTERNAL ERROR")
+        exit(1)

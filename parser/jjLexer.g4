@@ -1,7 +1,7 @@
 lexer grammar jjLexer
 	;
 
-import jj_value_types_lexer, jj_keywords_lexer, jj_names_lexer
+import jj_value_types_lexer, jj_keywords_lexer, jj_types_lexer, jj_names_lexer
 	;
 
 COMMENT_START

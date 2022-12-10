@@ -95,3 +95,7 @@ WHILE_DECL
 FOR_DECL
 	: 'for'
 	;
+
+CAST_DECL
+	: 'as'
+	;
