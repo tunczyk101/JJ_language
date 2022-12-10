@@ -28,6 +28,7 @@ class jjListener(jjParserListener):
     variables = []
     statements = {}
     standard_func = {"println": []}
+    curr_function = None
 
     def __init__(self, verbose=False):
         super().__init__()
@@ -42,16 +43,22 @@ class jjListener(jjParserListener):
     def enterFunction(self, ctx: jjParser.FunctionContext):
         self.logger.log("FUNC " + str(ctx.NAME()))
         name = str(ctx.NAME())
+        # self.logger.log(ctx. )
+        self.statements.update({ctx: []})
+
         if self.functions_list.get(name) is None:
             self.functions_list.update({name: []})
-            self.statements.update({ctx: []})
+            self.curr_function = ctx
         else:
-            self.logger.log("UPDATE F")
+            # self.statements.update({ctx: []})
             self.logger.log("UPDATE F")
 
     # Exit a parse tree produced by jjParser#function.
     def exitFunction(self, ctx: jjParser.FunctionContext):
-        self.clear_scope_var(ctx)
+        self.logger.log("EXIT FUNC " + ctx.getText())
+        for i in range(len(self.variables) - 1, -1, -1):
+            if self.variables[i].scope == ctx:
+                self.variables.pop(i)
 
     # Enter a parse tree produced by jjParser#function_main.
     def enterFunction_main(self, ctx: jjParser.Function_mainContext):
@@ -73,8 +80,12 @@ class jjListener(jjParserListener):
     # Enter a parse tree produced by jjParser#argument_decl.
     def enterArgument_decl(self, ctx: jjParser.Argument_declContext):
         self.logger.log("ENTER ARG DECL" + ctx.getText())
-        name = str(ctx.NAME())
         curr_scope = list(self.statements.keys())[-1]
+
+        if self.curr_function == curr_scope:
+            print("ERROR: No default declaration of function: " + str(curr_scope.NAME()))
+            exit(0)
+        name = str(ctx.NAME())
 
         self.checkVariableExistence(name, curr_scope)
 
