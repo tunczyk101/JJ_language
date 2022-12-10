@@ -46,18 +46,22 @@ class jjVisitor(jjParserVisitor):
     def setVariableValue(self, name, value):
         self.getVariable(name).value = value
 
+    def stack_start_block(self):
+        self.variablesStack.append(None)
+
+    def stack_end_block(self):
+        while(self.variablesStack[-1] is not None):
+            self.variablesStack.pop()
+        self.variablesStack.pop()
+
     def get_std_fn(self, name):
         match name:
             case "println": return STD_functions.println
         
     def visitStructural_block(self, ctx: jjParser.Structural_blockContext):
-        self.variablesStack.append(None)
-
+        self.stack_start_block()
         super().visitStructural_block(ctx)
-        
-        while(self.variablesStack[-1] is not None):
-            self.variablesStack.pop()
-        self.variablesStack.pop()
+        self.stack_end_block()
 
     def visitVariable_declaration(self, ctx: jjParser.Variable_declarationContext):
         self.variablesStack.append(Variable(
@@ -169,14 +173,20 @@ class jjVisitor(jjParserVisitor):
         return None
 
     def visitFor_statement(self, ctx: jjParser.For_statementContext):
-        self.variablesStack.append(None)
+        self.stack_start_block()
         
         self.visitInstruction_line(ctx.instruction_line(0))
         while self.visitInstruction_line(ctx.instruction_line(1)):
             self.visitStructural_block(ctx.structural_block())
             self.visitInstruction(ctx.instruction())
 
-        while(self.variablesStack[-1] is not None):
-            self.variablesStack.pop()
-        self.variablesStack.pop()
+        self.stack_end_block()
+
+    def visitWhile_statement(self, ctx: jjParser.While_statementContext):
+        self.stack_start_block()
+
+        while self.visitExpresion_in_parenthesis(ctx.expresion_in_parenthesis()).get_value():
+            self.visitStructural_block(ctx.structural_block())
+
+        self.stack_end_block()
         
