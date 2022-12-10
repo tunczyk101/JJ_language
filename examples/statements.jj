@@ -19,9 +19,11 @@ func main
     {
         mutable_var = mutable_var * xd;
     }
+    println(mutable_var);
 
-    for( let mut i { 0 }; i < 0; i = i + 1 )
+    for( let mut i { 0 }; i < 10; i = i + 1 )
     {
-         //mutable_var = mutable_var - xd;
+        println(i);
     }
+    
 }

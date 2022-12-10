@@ -32,13 +32,19 @@ class jjVisitor(jjParserVisitor):
         super().__init__()
         self.variablesStack = collections.deque()
 
-    def getVariableValue(self, name):
+    def getVariable(self, name):
         for var in reversed(self.variablesStack):
             if var is not None and var.name == name:
-                return var.value
+                return var
 
         print(f"ERROR: variable '{name}' is not defined.")
         exit(0)
+
+    def getVariableValue(self, name):
+        return self.getVariable(name).value
+
+    def setVariableValue(self, name, value):
+        self.getVariable(name).value = value
 
     def get_std_fn(self, name):
         match name:
@@ -134,7 +140,6 @@ class jjVisitor(jjParserVisitor):
         else:
             self.visitStructural_block(ctx.structural_block())
 
-
     def visitChildren(self, node):
         value = super().visitChildren(node)
         return value
@@ -145,4 +150,33 @@ class jjVisitor(jjParserVisitor):
             return self.getVariableValue(str(name))
 
         return self.visitValue(ctx.value())
-    
+
+    def visitAssignmnet_statement(self, ctx: jjParser.Assignmnet_statementContext):
+        value = self.visitExpresion(ctx.expresion()).get_value()
+        name = str(ctx.NAME())
+        self.setVariableValue(name, value)
+
+    def visitInstruction(self, ctx: jjParser.InstructionContext):
+        expr = ctx.expresion()
+        if expr is not None:
+            return self.visitExpresion(expr).get_value()
+        return super().visitInstruction(ctx)
+
+    def visitInstruction_line(self, ctx: jjParser.Instruction_lineContext):
+        intruction = ctx.instruction()
+        if intruction is not None:
+            return self.visitInstruction(intruction)
+        return None
+
+    def visitFor_statement(self, ctx: jjParser.For_statementContext):
+        self.variablesStack.append(None)
+        
+        self.visitInstruction_line(ctx.instruction_line(0))
+        while self.visitInstruction_line(ctx.instruction_line(1)):
+            self.visitStructural_block(ctx.structural_block())
+            self.visitInstruction(ctx.instruction())
+
+        while(self.variablesStack[-1] is not None):
+            self.variablesStack.pop()
+        self.variablesStack.pop()
+        
