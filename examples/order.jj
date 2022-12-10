@@ -1,0 +1,9 @@
+func main
+{
+    let a {2 * 2 + 2};
+    let b {2 + 2 * 2};
+
+    println(a);
+    println(b);
+    println(2 + 3 * 4 + 5 == 19)
+}

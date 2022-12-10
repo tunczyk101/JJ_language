@@ -9,14 +9,17 @@ if __name__ is not None and "." in __name__:
     from .jjParserVisitor import jjParserVisitor
     from .logger import Logger
     from .operations import UnaryOperations, BinaryOperations
+    from .ast import AST
 else:
     from jjParser import jjParser
     from jjParserVisitor import jjParserVisitor
     from logger import Logger
+    from operations import UnaryOperations, BinaryOperations
+    from ast import AST
 
 @dataclass
 class Variable:
-    isMutable: bool
+    is_mutable: bool
     name: str
     value: Any 
 
@@ -41,7 +44,6 @@ class jjVisitor(jjParserVisitor):
         match name:
             case "println": return STD_functions.println
         
-
     def visitStructural_block(self, ctx: jjParser.Structural_blockContext):
         self.variablesStack.append(None)
 
@@ -53,22 +55,22 @@ class jjVisitor(jjParserVisitor):
 
     def visitVariable_declaration(self, ctx: jjParser.Variable_declarationContext):
         self.variablesStack.append(Variable(
-            isMutable = ctx.MUTABLE_TOKEN() is not None, 
+            is_mutable = ctx.MUTABLE_TOKEN() is not None, 
             name = str(ctx.NAME()),
-            value = self.visitExpresion(ctx.expresion())
+            value = self.visitExpresion(ctx.expresion()).get_value()
         ))
         
     def visitFunction_call(self, ctx: jjParser.Function_callContext):   
         std_fn = self.get_std_fn(str(ctx.NAME()))
         if(std_fn is not None):
-            std_fn([self.visitExpresion(child) for child in ctx.children if isinstance(child, jjParser.ExpresionContext)])
+            std_fn([self.visitExpresion(child).get_value() for child in ctx.children if isinstance(child, jjParser.ExpresionContext)])
 
         return super().visitFunction_call(ctx)
 
     def visitValue(self, ctx: jjParser.ValueContext):
-        bool = ctx.BOOL()
-        if bool is not None:
-            return str(bool) == 'true'
+        bool_val = ctx.BOOL()
+        if bool_val is not None:
+            return str(bool_val) == 'true'
         else:
             num_str = str(ctx.NUMBER_TYPE())
             return float(num_str) if '.' in num_str else int(num_str)
@@ -83,35 +85,36 @@ class jjVisitor(jjParserVisitor):
     def visitAll_binary_operations(self, ctx: jjParser.All_binary_operationsContext):
         text = ctx.getText()
         match text:
-            case '*': return BinaryOperations.mul
-            case '/': return BinaryOperations.div
-            case '%': return BinaryOperations.mod
-            case '==': return BinaryOperations.eq
-            case '!=': return BinaryOperations.not_eq
-            case '<': return BinaryOperations.less
-            case '>': return BinaryOperations.more
-            case '<=': return BinaryOperations.less_eq
-            case '>=': return BinaryOperations.more_eq
-            case '||': return BinaryOperations.or_fn
-            case '&&': return BinaryOperations.and_fn
-            case '+': return BinaryOperations.add
-            case '-': return BinaryOperations.sub
+            case '*': return (BinaryOperations.mul, 6)
+            case '/': return (BinaryOperations.div, 6)
+            case '%': return (BinaryOperations.mod, 6)
+            case '==': return (BinaryOperations.eq, 3)
+            case '!=': return (BinaryOperations.not_eq, 3)
+            case '<': return (BinaryOperations.less, 4)
+            case '>': return (BinaryOperations.more, 4)
+            case '<=': return (BinaryOperations.less_eq, 4)
+            case '>=': return (BinaryOperations.more_eq, 4)
+            case '||': return (BinaryOperations.or_fn, 1)
+            case '&&': return (BinaryOperations.and_fn, 2)
+            case '+': return (BinaryOperations.add, 5)
+            case '-': return (BinaryOperations.sub, 5)
 
     def visitExpresion_in_parenthesis(self, ctx: jjParser.Expresion_in_parenthesisContext):
-        return self.visitExpresion(ctx.expresion())
+        return AST(self.visitExpresion(ctx.expresion()))
 
     def visitExpresion(self, ctx: jjParser.ExpresionContext):
         if ctx.getChildCount() == 3:
             left = self.visitLeft_of_binary_operation(ctx.left_of_binary_operation())
-            bin_op_fn = self.visitAll_binary_operations(ctx.all_binary_operations())
+            bin_op, prority = self.visitAll_binary_operations(ctx.all_binary_operations())
             right = self.visitExpresion(ctx.expresion())
-            return bin_op_fn(left, right)
-        
+            
+            return AST(left, (bin_op, prority, right))
+    
         unary = ctx.all_unary_operations()
         if unary is not None:
-            return self.visitAll_unary_operations(unary)(self.visitExpresion(ctx.expresion()))
+            return AST(self.visitAll_unary_operations(unary)(self.visitExpresion(ctx.expresion()).get_value()))
 
-        return super().visitExpresion(ctx)
+        return AST(super().visitExpresion(ctx))
 
     def visitIf_statement_start(self, ctx: jjParser.If_statement_startContext):
         return self.visitExpresion_in_parenthesis(ctx.expresion_in_parenthesis())

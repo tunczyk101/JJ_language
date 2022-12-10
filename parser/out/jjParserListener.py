@@ -154,7 +154,7 @@ class jjParserListener(ParseTreeListener):
         name = str(ctx.NAME())
         if self.variables.get(name) != None:
             self.logger.log("!!!!! PONOWNA DEKLARACJA ZMIENNEJ: " + name)
-            # exit(1)
+            #exit(1)
         self.variables.update({name: (ctx.MUTABLE_TOKEN() is not None)})
         self.statements[list(self.statements.keys())[-1]].append(name)
         pass
