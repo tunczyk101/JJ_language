@@ -1,0 +1,15 @@
+func main
+{
+    let a { 0 };
+    let i { a };
+
+    let j { 2 };
+    if(!true) {
+        println(j);
+    } else if (a != i) {
+        println(123);
+    } else {
+        let j { 1 };
+        println(j, 2, 3, 4, 5);
+    }
+}
