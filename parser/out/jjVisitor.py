@@ -122,12 +122,13 @@ class jjVisitor(jjParserVisitor):
     
         unary = ctx.all_unary_operations()
         if unary is not None:
-            return AST(self.visitAll_unary_operations(unary)(self.visitExpresion(ctx.expresion()).get_value()))
+            value = self.visitAll_unary_operations(unary)(self.visitExpresion(ctx.expresion()).get_value())
+            return AST(value)
 
         return AST(super().visitExpresion(ctx))
 
     def visitIf_statement_start(self, ctx: jjParser.If_statement_startContext):
-        return self.visitExpresion_in_parenthesis(ctx.expresion_in_parenthesis())
+        return self.visitExpresion_in_parenthesis(ctx.expresion_in_parenthesis()).get_value()
 
     def visitIf_statement(self, ctx: jjParser.If_statementContext):
         if self.visitIf_statement_start(ctx.if_statement_start()):
@@ -158,6 +159,10 @@ class jjVisitor(jjParserVisitor):
     def visitAssignmnet_statement(self, ctx: jjParser.Assignmnet_statementContext):
         value = self.visitExpresion(ctx.expresion()).get_value()
         name = str(ctx.NAME())
+
+        if(type(self.getVariableValue(name)) != type(value)):
+            raise Exception(f'Variable {name} is not of type {type(value)}')
+
         self.setVariableValue(name, value)
 
     def visitInstruction(self, ctx: jjParser.InstructionContext):
