@@ -197,6 +197,10 @@ class jjVisitor(jjParserVisitor):
 
     def visitCast_expression(self, ctx: jjParser.Cast_expressionContext):
         value = self.visitLeft_of_cast_expr(ctx.left_of_cast_expr())
+
+        if (isinstance(value, AST)):
+            value = value.get_value()
+
         type_name = str(ctx.TYPE_NAME())
 
         token_name = lambda x: jjParser.literalNames[x].removeprefix("'").removesuffix("'")

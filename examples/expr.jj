@@ -10,7 +10,7 @@ func main
     let g { true }; // bool - true
     let mut h { false }; // bool - false
     let i { a }; //  copy
-    let j { a + 10 * (2 + f) }; //  value of expr
+    let j { (a + 10) as float * (2 as float + f) }; //  value of expr
 
     println(j);
 

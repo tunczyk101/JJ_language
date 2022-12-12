@@ -32,6 +32,13 @@ class AST:
 
             while len(self.stack) > 0 and self.stack[0][1] > prority:
                 rhs = self.get_value((rhs, prority))
+
+            self.check_type(lhs, rhs)
+
             lhs = op(lhs, rhs)
 
         return lhs
+        
+    def check_type(self, lhs, rhs):
+        if type(lhs) != type(rhs):
+            raise Exception("Type mismatch")
