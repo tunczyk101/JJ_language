@@ -162,7 +162,8 @@ class jjVisitor(jjParserVisitor):
         name = str(ctx.NAME())
 
         if(type(self.getVariableValue(name)) != type(value)):
-            raise Exception(f'Variable {name} is not of type {type(value)}')
+            print(f"ERROR: Variable '{name}' is not of type {type(value)}")
+            exit(1)
 
         self.setVariableValue(name, value)
 
@@ -213,5 +214,5 @@ class jjVisitor(jjParserVisitor):
         if type_name == token_name(jjParser.BOOL_TYPE):
             return bool(value)
         
-        print("INTERNAL ERROR")
+        print("INTERNAL ERROR!")
         exit(1)

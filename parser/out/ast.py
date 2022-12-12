@@ -41,4 +41,5 @@ class AST:
         
     def check_type(self, lhs, rhs):
         if type(lhs) != type(rhs):
-            raise Exception("Type mismatch")
+            print("ERROR: Type mismatch")
+            exit(1)

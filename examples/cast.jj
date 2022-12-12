@@ -3,6 +3,7 @@ func main
     let mut x { 1 };
     x = 2.4 as int;
     println(x);
+    
     println(1 as float);
     println(1 as bool);
     println(true as int);
