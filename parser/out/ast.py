@@ -35,7 +35,7 @@ class AST:
 
             self.check_type(lhs, rhs)
 
-            lhs = op(lhs, rhs)
+            lhs = type(rhs)(op(lhs, rhs))
 
         return lhs
         
