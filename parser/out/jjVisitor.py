@@ -122,8 +122,9 @@ class jjVisitor(jjParserVisitor):
     
         unary = ctx.all_unary_operations()
         if unary is not None:
-            value = self.visitAll_unary_operations(unary)(self.visitExpresion(ctx.expresion()).get_value())
-            return AST(value)
+            value = self.visitExpresion(ctx.expresion()).get_value()
+            value_after_op = type(value)(self.visitAll_unary_operations(unary)(value))
+            return AST(value_after_op)
 
         return AST(super().visitExpresion(ctx))
 
