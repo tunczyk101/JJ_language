@@ -46,7 +46,7 @@ class Function_Argument:
 
 @dataclass
 class Function_specialization:
-    guard: Optional[jjParser.ExpresionContext]
+    guard_block: Optional[jjParser.ExpresionContext]
     body_block: Optional[jjParser.Structural_blockContext]
     return_block: Optional[jjParser.Return_blockContext]
 
@@ -86,7 +86,6 @@ class jjVisitor(jjParserVisitor):
             pass
         else:
             self.functions.update({func.name:func})
-            print(f"Added function '{func.name}'")
         
 
     def getVariable(self, name):
@@ -128,9 +127,17 @@ class jjVisitor(jjParserVisitor):
         ))
         
     def visitFunction_call(self, ctx: jjParser.Function_callContext):   
-        std_fn = self.get_std_fn(str(ctx.NAME()))
-        if(std_fn is not None):
+        fn_name = str(ctx.NAME())
+        std_fn = self.get_std_fn(fn_name)
+        if std_fn is not None:
             std_fn([self.visitExpresion(child).get_value() for child in ctx.children if isinstance(child, jjParser.ExpresionContext)])
+        elif fn_name in self.functions:
+            self.stack_start_block()
+            func = self.functions[fn_name]
+            func_struct_block = func.specializations[0].body_block
+            if func_struct_block is not None:
+                self.visitStructural_block(func_struct_block)
+            self.stack_end_block()
 
         return super().visitFunction_call(ctx)
 
