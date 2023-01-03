@@ -35,7 +35,11 @@ class AST:
 
             self.check_type(lhs, rhs)
 
-            lhs = type(rhs)(op(lhs, rhs))
+            op_result = op(lhs, rhs)
+            if isinstance(op_result, bool):
+                lhs = op_result
+            else:
+                lhs = type(rhs)(op_result)
 
         return lhs
         
