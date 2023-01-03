@@ -1,0 +1,9 @@
+func empty
+{
+
+}
+
+func main
+{
+    empty();
+}
