@@ -19,6 +19,7 @@ func main
     } else if (a != i) {
         println(123);
     } else {
+        println(j);
         let j { 1 };
         println(j, 2, 3, 4, 5);
     }

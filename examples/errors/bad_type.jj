@@ -1,5 +1,5 @@
 func main
 {
-    let mut x {1};
+    let mut x { 1 };
     x = 1.0;
 }
