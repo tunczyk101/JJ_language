@@ -65,6 +65,22 @@ class jjParserListener(ParseTreeListener):
     def exitArgument_decl(self, ctx:jjParser.Argument_declContext):
         pass
 
+        # Enter a parse tree produced by jjParser#left_of_cast_expr.
+    def enterLeft_of_cast_expr(self, ctx:jjParser.Left_of_cast_exprContext):
+        pass
+
+    # Exit a parse tree produced by jjParser#left_of_cast_expr.
+    def exitLeft_of_cast_expr(self, ctx:jjParser.Left_of_cast_exprContext):
+        pass
+
+
+    # Enter a parse tree produced by jjParser#cast_expression.
+    def enterCast_expression(self, ctx:jjParser.Cast_expressionContext):
+        pass
+
+    # Exit a parse tree produced by jjParser#cast_expression.
+    def exitCast_expression(self, ctx:jjParser.Cast_expressionContext):
+        pass
 
     # Enter a parse tree produced by jjParser#additional_arguments_decl.
     def enterAdditional_arguments_decl(self, ctx: jjParser.Additional_arguments_declContext):

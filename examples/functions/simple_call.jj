@@ -1,0 +1,6 @@
+func do_nothing
+
+func main
+{
+    do_nothing();
+}
