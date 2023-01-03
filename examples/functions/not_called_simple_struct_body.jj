@@ -1,0 +1,6 @@
+func call
+{
+    println(1);
+}
+
+func main
