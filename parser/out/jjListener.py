@@ -38,6 +38,9 @@ class jjListener(jjParserListener):
     def exitProg(self, ctx: jjParser.ProgContext):
         self.logger.log(self.functions_list)
         self.logger.log(self.variables)
+        if self.functions_list.get("main") is None:
+            print("ERROR!: Main is not defined")
+            exit(0)
 
     # Enter a parse tree produced by jjParser#function.
     def enterFunction(self, ctx: jjParser.FunctionContext):
@@ -49,9 +52,6 @@ class jjListener(jjParserListener):
         if self.functions_list.get(name) is None:
             self.functions_list.update({name: []})
             self.curr_function = ctx
-        else:
-            # self.statements.update({ctx: []})
-            self.logger.log("UPDATE F")
 
     # Exit a parse tree produced by jjParser#function.
     def exitFunction(self, ctx: jjParser.FunctionContext):
@@ -69,6 +69,7 @@ class jjListener(jjParserListener):
             exit(1)
         self.functions_list.update({"main": []})
         self.statements.update({ctx: []})
+        self.curr_function = ctx
         pass
 
     # Exit a parse tree produced by jjParser#function_main.
@@ -81,10 +82,6 @@ class jjListener(jjParserListener):
     def enterArgument_decl(self, ctx: jjParser.Argument_declContext):
         self.logger.log("ENTER ARG DECL" + ctx.getText())
         curr_scope = list(self.statements.keys())[-1]
-
-        if self.curr_function == curr_scope:
-            print("ERROR: No default declaration of function: " + str(curr_scope.NAME()))
-            exit(0)
         name = str(ctx.NAME())
 
         self.checkVariableExistence(name, curr_scope)
@@ -118,7 +115,6 @@ class jjListener(jjParserListener):
         # self.statements[list(self.statements.keys())[-1]].append(name)
         self.logger.log("dodano  " + ctx.getText())
 
-
     # Enter a parse tree produced by jjParser#function_call.
     def enterFunction_call(self, ctx: jjParser.Function_callContext):
         self.logger.log("ENTER FUNC CALL  " + ctx.getText())
@@ -128,11 +124,16 @@ class jjListener(jjParserListener):
             exit(0)
         pass
 
-
     # Enter a parse tree produced by jjParser#if_statement.
     def enterIf_statement(self, ctx: jjParser.If_statementContext):
         self.statements.update({ctx: []})
         pass
+
+    def enterStructural_block(self, ctx:jjParser.Structural_blockContext):
+        self.statements.update({ctx: []})
+
+    def exitStructural_block(self, ctx:jjParser.Structural_blockContext):
+        self.clear_scope_var(ctx)
 
     # Exit a parse tree produced by jjParser#if_statement.
     def exitIf_statement(self, ctx: jjParser.If_statementContext):
@@ -191,7 +192,7 @@ class jjListener(jjParserListener):
             exit(0)
 
     def clear_scope_var(self, ctx):
-        for i in range(len(self.variables)-1, -1, -1):
+        for i in range(len(self.variables) - 1, -1, -1):
             if self.variables[i].scope == ctx:
                 self.variables.pop(i)
 
@@ -199,7 +200,11 @@ class jjListener(jjParserListener):
 
     def run(self, node):
         self.logger.log("run")
+        # self.curr_function = None
         ParseTreeWalker().walk(self, node)
+        # if self.curr_function is None:
+        #     return False
+        # return True
 
 
 del jjParser
