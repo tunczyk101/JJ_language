@@ -5,14 +5,17 @@ from typing import Any
 
 from antlr4 import *
 
+
 from .jjParserListener import jjParserListener
 
 if __name__ is not None and "." in __name__:
     from .logger import Logger
     from .jjParser import jjParser
+    from .functions import STANDARD_FUNCTIONS
 else:
     from logger import Logger
     from jjParser import jjParser
+    from functions import STANDARD_FUNCTIONS
 
 
 @dataclass
@@ -27,7 +30,6 @@ class jjListener(jjParserListener):
     functions_list = {}
     variables = []
     statements = {}
-    standard_func = {"println": []}
     curr_function = None
 
     def __init__(self, verbose=False):
@@ -119,7 +121,7 @@ class jjListener(jjParserListener):
     def enterFunction_call(self, ctx: jjParser.Function_callContext):
         self.logger.log("ENTER FUNC CALL  " + ctx.getText())
         name = str(ctx.NAME())
-        if self.functions_list.get(name) is None and self.standard_func.get(name) is None:
+        if self.functions_list.get(name) is None and name not in STANDARD_FUNCTIONS:
             print("ERROR: Func " + name + " not defined")
             exit(0)
         pass

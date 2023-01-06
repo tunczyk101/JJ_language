@@ -10,14 +10,14 @@ if __name__ is not None and "." in __name__:
     from .logger import Logger
     from .operations import UnaryOperations, BinaryOperations
     from .ast import AST
-    from .functions import Function, STD_functions
+    from .functions import Function, STANDARD_FUNCTIONS, VariadicArguments
 else:
     from jjParser import jjParser
     from jjParserVisitor import jjParserVisitor
     from logger import Logger
     from operations import UnaryOperations, BinaryOperations
     from ast import AST
-    from functions import Function, STD_functions
+    from functions import Function, STANDARD_FUNCTIONS, VariadicArguments
 
 @dataclass
 class Variable:
@@ -65,8 +65,8 @@ class jjVisitor(jjParserVisitor):
         self.variablesStack.pop()
 
     def get_std_fn(self, name):
-        match name:
-            case "println": return STD_functions.println
+        if name in STANDARD_FUNCTIONS:
+            return STANDARD_FUNCTIONS[name]
         
     def visitStructural_block(self, ctx: jjParser.Structural_blockContext):
         self.stack_start_block()
@@ -84,7 +84,12 @@ class jjVisitor(jjParserVisitor):
         fn_name = str(ctx.NAME())
         std_fn = self.get_std_fn(fn_name)
         if std_fn is not None:
-            std_fn([self.visitExpresion(child).get_value() for child in ctx.children if isinstance(child, jjParser.ExpresionContext)])
+            argumets = [child for child in ctx.children if isinstance(child, jjParser.ExpresionContext)]
+            if isinstance(std_fn.arguments_count, VariadicArguments) or len(argumets) == std_fn.arguments_count:
+                std_fn.call([self.visitExpresion(child).get_value() for child in argumets], ctx)
+            else:
+                print(f"ERROR: function '{fn_name}' expected {std_fn.arguments_count} arguments, but {len(argumets)} were given.")
+                exit(0)
         elif fn_name in self.functions:
             self.stack_start_block()
             func = self.functions[fn_name]

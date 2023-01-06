@@ -1,10 +1,13 @@
-from typing import Any, Optional
+from typing import Any, Optional, Callable
 from dataclasses import dataclass
 
 if __name__ is not None and "." in __name__:
     from .jjParser import jjParser
 else:
     from jjParser import jjParser
+
+class VariadicArguments:
+    pass
 
 @dataclass
 class Function_Argument:
@@ -50,6 +53,27 @@ class Function:
         specialisation = Function_specialization.from_optional_function_blocks(function_context.optinal_function_blocks())
         
         return Function(name, arguments, [specialisation])
-     
-class STD_functions:
-    def println(args): print(' '.join(map(lambda x: str(x), args)))
+
+def print_with_end(args, end):
+    print(' '.join(map(lambda x: str(x), args)), end=end)
+
+def assert_fn(arg, ctx: jjParser.Function_callContext):
+    if(not arg):
+        assertion_text = ctx.getText()[len("assert("):-1]
+        print(f"ERROR: Assertion {assertion_text} failed at {ctx.getSourceInterval()}.")
+        exit(0)
+
+class STD_function:
+    def __init__(self, arguments_count: int|VariadicArguments, body: Callable[[list[Any]], Any]):
+        self.arguments_count = arguments_count
+        self.body = body
+
+    def call(self, args: list[Any], ctx: jjParser.Function_callContext):
+        return self.body(args, ctx)
+
+STANDARD_FUNCTIONS = {
+    'println':  STD_function(VariadicArguments(), lambda args, _: print_with_end(args, end='\n')),
+    'print':    STD_function(VariadicArguments(), lambda args, _: print_with_end(args, end='')),
+    'assert':   STD_function(1, lambda args, ctx: assert_fn(args[0], ctx))
+}
+    
