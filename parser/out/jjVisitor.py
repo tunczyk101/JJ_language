@@ -45,19 +45,22 @@ class jjVisitor(jjParserVisitor):
             if specialization.guard_block is None or self.visitExpresion(specialization.guard_block.expresion()).get_value():
                 return specialization
         
-    def getVariable(self, name):
+    def getVariable(self, name, scope = 0):
         for var in reversed(self.variablesStack):
-            if var is not None and var.name == name:
+            if var is None and scope > 0:
+                scope -= 1
+                continue
+            if scope == 0 and var is not None and var.name == name:
                 return var
 
         print(f"ERROR: variable '{name}' is not defined.")
         exit(0)
 
-    def getVariableValue(self, name):
-        return self.getVariable(name).value
+    def getVariableValue(self, name, scope = 0):
+        return self.getVariable(name, scope).value
 
-    def setVariableValue(self, name, value):
-        self.getVariable(name).value = value
+    def setVariableValue(self, name, value, scope = 0):
+        self.getVariable(name,scope).value = value
 
     def stack_start_block(self):
         self.variablesStack.append(None)
@@ -97,8 +100,10 @@ class jjVisitor(jjParserVisitor):
         
         fn_name = str(ctx.NAME())
         std_fn = self.get_std_fn(fn_name)
-        argumets = [self.visitExpresion(child).get_value() for child in ctx.children if isinstance(child, jjParser.ExpresionContext)]
-        
+        argumets_ctx = [child for child in ctx.children if isinstance(child, jjParser.ExpresionContext)]
+        argumets = [self.visitExpresion(child).get_value() for child in argumets_ctx] 
+        variable_args_names = [str(child.identifier().NAME()) if child.identifier() is not None else None for child in argumets_ctx]
+
         result = None
         
         if std_fn is not None:
@@ -113,6 +118,10 @@ class jjVisitor(jjParserVisitor):
             if len(func.arguments) > 0:
                 if len(argumets) == len(func.arguments):
                     for i in range(len(argumets)):
+                        if func.arguments[i].is_mutable and variable_args_names[i] is None:
+                            print(f"ERROR: can't pass expression as mutable argument to function '{fn_name}'.")
+                            exit(1)
+
                         self.variablesStack.append(Variable(
                             is_mutable = func.arguments[i].is_mutable,
                             name = func.arguments[i].name,
@@ -130,6 +139,10 @@ class jjVisitor(jjParserVisitor):
 
             if func_return_block is not None:
                 result = self.visitExpresion(func_return_block.expresion())
+
+            for i, arg in enumerate(func.arguments):
+                if arg.is_mutable:
+                    self.setVariableValue(variable_args_names[i], self.getVariableValue(arg.name), 1), 
 
             self.stack_end_block()
 

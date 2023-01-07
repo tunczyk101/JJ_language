@@ -1,0 +1,8 @@
+func f
+with mut x
+
+
+func main
+{
+    f(1);
+}

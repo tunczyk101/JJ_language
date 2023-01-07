@@ -1,0 +1,12 @@
+func add_2
+with mut x
+{
+    x = x + 2;
+}
+
+func main
+{
+    let mut x { 0 };
+    add_2(x);
+    println(x);
+}
