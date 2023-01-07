@@ -36,12 +36,15 @@ class jjVisitor(jjParserVisitor):
         func = Function.from_function_context(ctx)
         
         if func.name in self.functions:
-            # todo
-            pass
+            self.functions[func.name].specializations.append(func.specializations[0])
         else:
             self.functions.update({func.name:func})
         
-
+    def get_current_func_specializations(self, func: Function):
+        for specialization in reversed(func.specializations):
+            if specialization.guard_block is None or self.visitExpresion(specialization.guard_block.expresion()).get_value():
+                return specialization
+        
     def getVariable(self, name):
         for var in reversed(self.variablesStack):
             if var is not None and var.name == name:
@@ -106,8 +109,7 @@ class jjVisitor(jjParserVisitor):
         elif fn_name in self.functions:
             self.stack_start_block()
             func = self.functions[fn_name]
-            func_struct_block = func.specializations[0].body_block
-            func_return_block = func.specializations[0].return_block
+
             if len(func.arguments) > 0:
                 if len(argumets) == len(func.arguments):
                     for i in range(len(argumets)):
@@ -118,6 +120,11 @@ class jjVisitor(jjParserVisitor):
                         ))
                 else:
                     error_bad_arg_count(fn_name, len(func.arguments), len(argumets))
+
+            func_specializations = self.get_current_func_specializations(func)
+            func_struct_block = func_specializations.body_block
+            func_return_block = func_specializations.return_block
+
             if func_struct_block is not None:
                 self.visitStructural_block(func_struct_block)
 

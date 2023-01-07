@@ -1,0 +1,21 @@
+func fib
+with x 
+returns fib(x - 1) + fib(x - 2)
+
+func fib
+with x
+when x == 0 
+returns 0 
+
+func fib
+with x
+when x == 1
+returns 1
+
+func main
+{
+    for(let mut i { 0 }; i < 10; i = i + 1)
+    {
+        println(fib(i));
+    }
+}
