@@ -1,0 +1,25 @@
+func add
+with x, y
+returns x + y
+
+func subtract
+with x, y
+returns x - y
+
+func multiply
+with x, y
+returns x * y
+
+func divide
+with x, y
+returns x / y
+
+func main
+{
+    let x { add(1, 2) };
+    let y { subtract(1, 2) };
+    let z { multiply(1, 2) };
+    let w { divide(1 as float, 2 as float)};
+
+    println(x, y, z, w);
+}

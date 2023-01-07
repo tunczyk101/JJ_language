@@ -1,0 +1,8 @@
+func f
+with x
+
+
+func main
+{
+    let x { f(1) };
+}

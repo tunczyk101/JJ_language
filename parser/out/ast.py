@@ -45,5 +45,5 @@ class AST:
         
     def check_type(self, lhs, rhs):
         if type(lhs) != type(rhs):
-            print("ERROR: Type mismatch")
+            print(f"ERROR: Type mismatch in expression. Expected {type(lhs).__name__} but got {type(rhs).__name__}")
             exit(1)

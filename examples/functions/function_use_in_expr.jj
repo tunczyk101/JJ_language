@@ -1,0 +1,13 @@
+func add
+with x, y
+returns x + y
+
+func subtract
+with x, y
+returns x - y
+
+func main
+{
+    println(2 - subtract(add(1, 2) * 5, 3));
+    println(subtract(5, add(1, 2) - 3));
+}

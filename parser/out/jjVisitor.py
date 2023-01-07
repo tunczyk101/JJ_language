@@ -74,10 +74,17 @@ class jjVisitor(jjParserVisitor):
         self.stack_end_block()
 
     def visitVariable_declaration(self, ctx: jjParser.Variable_declarationContext):
+        name = str(ctx.NAME())
+        expr_ctx = ctx.expresion()
+        value = self.visitExpresion(expr_ctx).get_value()
+        
+        if expr_ctx.function_call() is not None and value is None:
+            print(f"ERROR: variable '{name}' can't be initialized with function '{expr_ctx.function_call().NAME()}' that is not returning a value.")
+
         self.variablesStack.append(Variable(
             is_mutable = ctx.MUTABLE_TOKEN() is not None, 
-            name = str(ctx.NAME()),
-            value = self.visitExpresion(ctx.expresion()).get_value()
+            name = name,
+            value = value
         ))
         
     def visitFunction_call(self, ctx: jjParser.Function_callContext):   
@@ -88,6 +95,9 @@ class jjVisitor(jjParserVisitor):
         fn_name = str(ctx.NAME())
         std_fn = self.get_std_fn(fn_name)
         argumets = [self.visitExpresion(child).get_value() for child in ctx.children if isinstance(child, jjParser.ExpresionContext)]
+        
+        result = None
+        
         if std_fn is not None:
             if isinstance(std_fn.arguments_count, VariadicArguments) or len(argumets) == std_fn.arguments_count:
                 std_fn.call(argumets, ctx)
@@ -97,6 +107,7 @@ class jjVisitor(jjParserVisitor):
             self.stack_start_block()
             func = self.functions[fn_name]
             func_struct_block = func.specializations[0].body_block
+            func_return_block = func.specializations[0].return_block
             if len(func.arguments) > 0:
                 if len(argumets) == len(func.arguments):
                     for i in range(len(argumets)):
@@ -109,9 +120,13 @@ class jjVisitor(jjParserVisitor):
                     error_bad_arg_count(fn_name, len(func.arguments), len(argumets))
             if func_struct_block is not None:
                 self.visitStructural_block(func_struct_block)
+
+            if func_return_block is not None:
+                result = self.visitExpresion(func_return_block.expresion())
+
             self.stack_end_block()
 
-        return super().visitFunction_call(ctx)
+        return result
 
     def visitValue(self, ctx: jjParser.ValueContext):
         bool_val = ctx.BOOL()
@@ -194,11 +209,16 @@ class jjVisitor(jjParserVisitor):
         return self.visitValue(ctx.value())
 
     def visitAssignmnet_statement(self, ctx: jjParser.Assignmnet_statementContext):
+        expr_ctx = ctx.expresion()
         value = self.visitExpresion(ctx.expresion()).get_value()
         name = str(ctx.NAME())
 
+        if expr_ctx.function_call() is not None and value is None:
+            print(f"ERROR: Cacn't assign function '{expr_ctx.function_call().NAME()}' that returns nothing to variable '{name}'.")
+            exit(1)
+           
         if(type(self.getVariableValue(name)) != type(value)):
-            print(f"ERROR: Variable '{name}' is not of type {type(value)}")
+            print(f"ERROR: Variable '{name}' is not of type {type(value)}.")
             exit(1)
 
         self.setVariableValue(name, value)
