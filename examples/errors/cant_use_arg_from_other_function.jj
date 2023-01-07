@@ -1,0 +1,13 @@
+func f1
+with x
+
+func f2
+with y
+{
+    println(x);
+}
+
+func main
+{
+    f2(2);
+}
