@@ -12,16 +12,20 @@ def check_initial_errors(program_path: str, verbose: bool):
     lexer = jjLexer(data)
     stream = CommonTokenStream(lexer)
     parser = jjParser(stream)
+
     parser.removeErrorListeners()
     error_listener = jjErrorListener()
     parser.addErrorListener(error_listener)
+
+    tree = parser.prog()
+
     if error_listener.has_syntax_error:
         return True
 
     listener = jjListener(verbose)
-
-    tree = parser.prog()
     listener.run(tree)
+
+    return False
 
 
 def interpret(program_path: str):
@@ -36,6 +40,6 @@ def interpret(program_path: str):
 
 
 def run(program_path: str):
-    if check_initial_errors(program_path, verbose=False):
-        return
-    interpret(program_path)
+    if not check_initial_errors(program_path, verbose=False):
+        interpret(program_path)
+
