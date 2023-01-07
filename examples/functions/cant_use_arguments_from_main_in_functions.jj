@@ -1,0 +1,11 @@
+func f
+with x
+{
+    println(^x);
+}
+
+func main
+{
+    let x { 0 };
+    f(1);
+}
