@@ -16,7 +16,7 @@ class Function_Argument:
 
     @staticmethod
     def from_argument_decl(argument_decl: jjParser.Argument_declContext) -> 'Function_Argument':
-        return Function_Argument(argument_decl.NAME(), argument_decl.MUTABLE() is not None)
+        return Function_Argument(str(argument_decl.NAME()), argument_decl.MUTABLE_TOKEN() is not None)
 
     @staticmethod
     def parse_all(argument_block: jjParser.Arguments_blockContext) -> list['Function_Argument']:
@@ -43,7 +43,7 @@ class Function_specialization:
 @dataclass
 class Function:
     name: str
-    arguments: list[str]
+    arguments: list[Function_Argument]
     specializations: list[Function_specialization]
 
     @staticmethod
@@ -54,13 +54,19 @@ class Function:
         
         return Function(name, arguments, [specialisation])
 
+def str_variable(arg):
+    if(isinstance(arg, bool)):
+        return "true" if arg else "false"
+    else:
+        return str(arg)
+
 def print_with_end(args, end):
-    print(' '.join(map(lambda x: str(x), args)), end=end)
+    print(' '.join(map(lambda x: str_variable(x), args)), end=end)
 
 def assert_fn(arg, ctx: jjParser.Function_callContext):
     if(not arg):
         assertion_text = ctx.getText()[len("assert("):-1]
-        print(f"ERROR: Assertion {assertion_text} failed at {ctx.getSourceInterval()}.")
+        print(f"ERROR: Assertion {assertion_text} failed at {ctx.getSourceInterval}.")
         exit(0)
 
 class STD_function:

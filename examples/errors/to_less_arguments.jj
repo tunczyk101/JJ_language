@@ -1,0 +1,8 @@
+func f
+with x, y, z
+
+
+func main
+{
+    f(1, 2);
+}

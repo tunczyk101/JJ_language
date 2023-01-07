@@ -81,19 +81,32 @@ class jjVisitor(jjParserVisitor):
         ))
         
     def visitFunction_call(self, ctx: jjParser.Function_callContext):   
+        def error_bad_arg_count(func_name, expected, given):
+            print(f"ERROR: function '{func_name}' expected {expected} arguments, but {given} were given.")
+            exit(0)
+        
         fn_name = str(ctx.NAME())
         std_fn = self.get_std_fn(fn_name)
+        argumets = [self.visitExpresion(child).get_value() for child in ctx.children if isinstance(child, jjParser.ExpresionContext)]
         if std_fn is not None:
-            argumets = [child for child in ctx.children if isinstance(child, jjParser.ExpresionContext)]
             if isinstance(std_fn.arguments_count, VariadicArguments) or len(argumets) == std_fn.arguments_count:
-                std_fn.call([self.visitExpresion(child).get_value() for child in argumets], ctx)
+                std_fn.call(argumets, ctx)
             else:
-                print(f"ERROR: function '{fn_name}' expected {std_fn.arguments_count} arguments, but {len(argumets)} were given.")
-                exit(0)
+                error_bad_arg_count(fn_name, std_fn.arguments_count, len(argumets))  
         elif fn_name in self.functions:
             self.stack_start_block()
             func = self.functions[fn_name]
             func_struct_block = func.specializations[0].body_block
+            if len(func.arguments) > 0:
+                if len(argumets) == len(func.arguments):
+                    for i in range(len(argumets)):
+                        self.variablesStack.append(Variable(
+                            is_mutable = func.arguments[i].is_mutable,
+                            name = func.arguments[i].name,
+                            value = argumets[i]
+                        ))
+                else:
+                    error_bad_arg_count(fn_name, len(func.arguments), len(argumets))
             if func_struct_block is not None:
                 self.visitStructural_block(func_struct_block)
             self.stack_end_block()

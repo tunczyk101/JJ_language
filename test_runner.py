@@ -2,8 +2,6 @@ import unittest
 import subprocess
 import os
 
-from jj import run
-
 TEST_PROGRAMS_PATH = "examples"
 TEST_RESULTS_PATH = "examples_results"
 RESULT_SUFIX = ".out"
@@ -19,7 +17,7 @@ class JJTests(unittest.TestCase):
         for program_name in self.program_names:
             with self.subTest(f"Testing '{program_name}'"):
                 print(f"Testing '{program_name}'")
-                out = subprocess.check_output(['python3.10', 'main.py',  TEST_PROGRAMS_PATH + os.path.sep + program_name])
+                out = subprocess.check_output(['python3.10', 'jj_interpreter.py',  TEST_PROGRAMS_PATH + os.path.sep + program_name])
                 
                 with open(TEST_RESULTS_PATH + os.path.sep + program_name + RESULT_SUFIX, "r") as f:
                      expected_output = f.read()

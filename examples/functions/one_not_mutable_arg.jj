@@ -1,0 +1,12 @@
+func print_fn
+with x
+{
+    println(x);
+}
+
+func main
+{
+    print_fn(1.2);
+    print_fn(1);
+    print_fn(true);
+}

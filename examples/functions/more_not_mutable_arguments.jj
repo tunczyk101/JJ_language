@@ -1,0 +1,10 @@
+func print_3
+with x, y, z
+{
+    println(x, y, z);
+}
+
+func main
+{
+    print_3(1, 1.0, true);
+}
