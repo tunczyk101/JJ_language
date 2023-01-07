@@ -1,0 +1,9 @@
+func main
+{
+    let j { 0 };
+    {
+        let j{ 1 };
+        println(j);
+        println(^j);
+    }
+}

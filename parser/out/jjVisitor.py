@@ -224,7 +224,7 @@ class jjVisitor(jjParserVisitor):
     def visitIdentifier(self, ctx: jjParser.IdentifierContext):
         name = ctx.NAME()
         if name is not None:
-            return self.getVariableValue(str(name))
+            return self.getVariableValue(str(name), 1 if ctx.SCOPE_PARENT_TOKEN() is not None else 0)
 
         return self.visitValue(ctx.value())
 
@@ -241,7 +241,7 @@ class jjVisitor(jjParserVisitor):
             print(f"ERROR: Variable '{name}' is not of type {type(value)}.")
             exit(1)
 
-        self.setVariableValue(name, value)
+        self.setVariableValue(name, value, 1 if ctx.SCOPE_PARENT_TOKEN() is not None else 0)
 
     def visitInstruction(self, ctx: jjParser.InstructionContext):
         expr = ctx.expresion()

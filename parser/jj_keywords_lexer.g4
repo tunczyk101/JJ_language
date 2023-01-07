@@ -99,3 +99,7 @@ FOR_DECL
 CAST_DECL
 	: 'as'
 	;
+
+SCOPE_PARENT_TOKEN
+	: '^'
+	;

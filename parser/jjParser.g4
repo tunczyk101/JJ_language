@@ -128,7 +128,7 @@ function_call
 
 identifier
 	: value
-	| NAME
+	| SCOPE_PARENT_TOKEN? NAME
 	;
 
 value
@@ -158,5 +158,5 @@ for_statement
 	;
 
 assignmnet_statement
-	: NAME ASSIGNMENT_TOKEN expresion
+	: SCOPE_PARENT_TOKEN? NAME ASSIGNMENT_TOKEN expresion
 	;
