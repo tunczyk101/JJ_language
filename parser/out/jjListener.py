@@ -1,11 +1,10 @@
-# Generated from jjParser.g4 by ANTLR 4.11.1
 import collections
 from dataclasses import dataclass
 from typing import Any
 
 from antlr4 import *
 
-
+from .jjErrorListener import print_semantic_error
 from .jjParserListener import jjParserListener
 
 if __name__ is not None and "." in __name__:
@@ -41,7 +40,7 @@ class jjListener(jjParserListener):
         self.logger.log(self.functions_list)
         self.logger.log(self.variables)
         if self.functions_list.get("main") is None:
-            print("ERROR!: Main is not defined")
+            print_semantic_error("Main is not defined")
             exit(0)
 
     # Enter a parse tree produced by jjParser#function.
@@ -66,19 +65,15 @@ class jjListener(jjParserListener):
     def enterFunction_main(self, ctx: jjParser.Function_mainContext):
         self.logger.log("Main")
         if self.functions_list.get("main") != None:
-            self.logger.log("!!!!!!!!!!!!!!!!!!! TYLKO JEDEN MAIN!!!")
-            print("ERROR: Multiple declarations of main function")
+            print_semantic_error("Multiple declarations of main function")
             exit(1)
         self.functions_list.update({"main": []})
         self.statements.update({ctx: []})
         self.curr_function = ctx
-        pass
 
     # Exit a parse tree produced by jjParser#function_main.
     def exitFunction_main(self, ctx: jjParser.Function_mainContext):
-        self.logger.log("exit Main")
         self.variables.clear()
-        pass
 
     # Enter a parse tree produced by jjParser#argument_decl.
     def enterArgument_decl(self, ctx: jjParser.Argument_declContext):
@@ -97,13 +92,12 @@ class jjListener(jjParserListener):
     def checkVariableExistence(self, name, curr_scope):
         for var in reversed(self.variables):
             if var.name == name and var.scope == curr_scope:
-                print("ERROR: Variable " + name + " already exists")
+                print_semantic_error("Variable " + name + " already exists")
                 exit(0)
 
     # Enter a parse tree produced by jjParser#variable_declaration.
     def enterVariable_declaration(self, ctx: jjParser.Variable_declarationContext):
         self.logger.log("ENTER VAR DEC  " + ctx.getText())
-        # self.logger.log(ctx.MUTABLE_TOKEN())
         name = str(ctx.NAME())
         curr_scope = list(self.statements.keys())[-1]
 
@@ -114,7 +108,6 @@ class jjListener(jjParserListener):
             name=name,
             scope=list(self.statements.keys())[-1]
         ))
-        # self.statements[list(self.statements.keys())[-1]].append(name)
         self.logger.log("dodano  " + ctx.getText())
 
     # Enter a parse tree produced by jjParser#function_call.
@@ -122,14 +115,12 @@ class jjListener(jjParserListener):
         self.logger.log("ENTER FUNC CALL  " + ctx.getText())
         name = str(ctx.NAME())
         if self.functions_list.get(name) is None and name not in STANDARD_FUNCTIONS:
-            print("ERROR: Func " + name + " not defined")
+            print_semantic_error("Semantic error: Func " + name + " not defined")
             exit(0)
-        pass
 
     # Enter a parse tree produced by jjParser#if_statement.
     def enterIf_statement(self, ctx: jjParser.If_statementContext):
         self.statements.update({ctx: []})
-        pass
 
     def enterStructural_block(self, ctx:jjParser.Structural_blockContext):
         self.statements.update({ctx: []})
@@ -144,7 +135,6 @@ class jjListener(jjParserListener):
     # Enter a parse tree produced by jjParser#else_statement.
     def enterElse_statement(self, ctx: jjParser.Else_statementContext):
         self.statements.update({ctx: []})
-        pass
 
     # Exit a parse tree produced by jjParser#else_statement.
     def exitElse_statement(self, ctx: jjParser.Else_statementContext):
@@ -153,7 +143,6 @@ class jjListener(jjParserListener):
     # Enter a parse tree produced by jjParser#while_statement.
     def enterWhile_statement(self, ctx: jjParser.While_statementContext):
         self.statements.update({ctx: []})
-        pass
 
     # Exit a parse tree produced by jjParser#while_statement.
     def exitWhile_statement(self, ctx: jjParser.While_statementContext):
@@ -162,7 +151,6 @@ class jjListener(jjParserListener):
     # Enter a parse tree produced by jjParser#for_statement.
     def enterFor_statement(self, ctx: jjParser.For_statementContext):
         self.statements.update({ctx: []})
-        pass
 
     # Exit a parse tree produced by jjParser#for_statement.
     def exitFor_statement(self, ctx: jjParser.For_statementContext):
@@ -175,22 +163,21 @@ class jjListener(jjParserListener):
         for var in reversed(self.variables):
             if var.name == name:
                 if not var.is_mutable:
-                    print("ERROR: Variable " + name + " is not mut")
+                    print_semantic_error("Variable " + name + " is not mut")
                     exit(0)
                 return
 
-        print("ERROR: " + name + " is not defined")
+        print_semantic_error(name + " is not defined")
         exit(0)
 
     def enterIdentifier(self, ctx: jjParser.IdentifierContext):
-
         name = ctx.NAME()
         if name is not None:
             name = str(name)
             for var in self.variables:
                 if var.name == name:
                     return
-            print("ERROR: " + name + " is not defined")
+            print_semantic_error(name + " is not defined")
             exit(0)
 
     def clear_scope_var(self, ctx):
@@ -202,11 +189,7 @@ class jjListener(jjParserListener):
 
     def run(self, node):
         self.logger.log("run")
-        # self.curr_function = None
         ParseTreeWalker().walk(self, node)
-        # if self.curr_function is None:
-        #     return False
-        # return True
 
 
 del jjParser

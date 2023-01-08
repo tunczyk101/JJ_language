@@ -11,7 +11,7 @@ def check_initial_errors(program_path: str, verbose: bool):
     data = FileStream(program_path)
     lexer = jjLexer(data)
     stream = CommonTokenStream(lexer)
-    parser = jjParser(stream)
+    parser = jjParser(stream, program_path)
 
     parser.removeErrorListeners()
     error_listener = jjErrorListener()
@@ -20,6 +20,7 @@ def check_initial_errors(program_path: str, verbose: bool):
     tree = parser.prog()
 
     if error_listener.has_syntax_error:
+        print("Number of syntax errors: ", parser.getNumberOfSyntaxErrors())
         return True
 
     listener = jjListener(verbose)
@@ -32,7 +33,7 @@ def interpret(program_path: str):
     data = FileStream(program_path)
     lexer = jjLexer(data)
     stream = CommonTokenStream(lexer)
-    parser = jjParser(stream)
+    parser = jjParser(stream, program_path)
     tree = parser.prog()
 
     visitor = jjVisitor()
@@ -42,4 +43,3 @@ def interpret(program_path: str):
 def run(program_path: str):
     if not check_initial_errors(program_path, verbose=False):
         interpret(program_path)
-

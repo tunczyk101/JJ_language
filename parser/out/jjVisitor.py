@@ -1,29 +1,30 @@
 import collections
-from antlr4 import *
 
-from typing import Any, Optional
+from typing import Any
 from dataclasses import dataclass
+
+from .jjErrorListener import print_semantic_error
 
 if __name__ is not None and "." in __name__:
     from .jjParser import jjParser
     from .jjParserVisitor import jjParserVisitor
-    from .logger import Logger
     from .operations import UnaryOperations, BinaryOperations
     from .ast import AST
     from .functions import Function, STANDARD_FUNCTIONS, VariadicArguments
 else:
     from jjParser import jjParser
     from jjParserVisitor import jjParserVisitor
-    from logger import Logger
     from operations import UnaryOperations, BinaryOperations
     from ast import AST
     from functions import Function, STANDARD_FUNCTIONS, VariadicArguments
+
 
 @dataclass
 class Variable:
     is_mutable: bool
     name: str
     value: Any
+
 
 class jjVisitor(jjParserVisitor):
 
@@ -34,18 +35,19 @@ class jjVisitor(jjParserVisitor):
 
     def addFunction(self, ctx: jjParser.FunctionContext):
         func = Function.from_function_context(ctx)
-        
+
         if func.name in self.functions:
             self.functions[func.name].specializations.append(func.specializations[0])
         else:
-            self.functions.update({func.name:func})
-        
+            self.functions.update({func.name: func})
+
     def get_current_func_specializations(self, func: Function):
         for specialization in reversed(func.specializations):
-            if specialization.guard_block is None or self.visitExpresion(specialization.guard_block.expresion()).get_value():
+            if specialization.guard_block is None or self.visitExpresion(
+                    specialization.guard_block.expresion()).get_value():
                 return specialization
-        
-    def getVariable(self, name, scope = 0):
+
+    def getVariable(self, name, scope=0):
         for var in reversed(self.variablesStack):
             if var is None and scope > 0:
                 scope -= 1
@@ -53,27 +55,27 @@ class jjVisitor(jjParserVisitor):
             if scope == 0 and var is not None and var.name == name:
                 return var
 
-        print(f"ERROR: variable '{name}' is not defined.")
+        print_semantic_error(f"variable '{name}' is not defined.")
         exit(0)
 
-    def getVariableValue(self, name, scope = 0):
+    def getVariableValue(self, name, scope=0):
         return self.getVariable(name, scope).value
 
-    def setVariableValue(self, name, value, scope = 0):
-        self.getVariable(name,scope).value = value
+    def setVariableValue(self, name, value, scope=0):
+        self.getVariable(name, scope).value = value
 
     def stack_start_block(self):
         self.variablesStack.append(None)
 
     def stack_end_block(self):
-        while(self.variablesStack[-1] is not None):
+        while self.variablesStack[-1] is not None:
             self.variablesStack.pop()
         self.variablesStack.pop()
 
     def get_std_fn(self, name):
         if name in STANDARD_FUNCTIONS:
             return STANDARD_FUNCTIONS[name]
-        
+
     def visitStructural_block(self, ctx: jjParser.Structural_blockContext):
         self.stack_start_block()
         super().visitStructural_block(ctx)
@@ -83,52 +85,55 @@ class jjVisitor(jjParserVisitor):
         name = str(ctx.NAME())
         expr_ctx = ctx.expresion()
         value = self.visitExpresion(expr_ctx).get_value()
-        
+
         if expr_ctx.function_call() is not None and value is None:
-            print(f"ERROR: variable '{name}' can't be initialized with function '{expr_ctx.function_call().NAME()}' that is not returning a value.")
+            print_semantic_error(
+                f"variable '{name}' can't be initialized with function '{expr_ctx.function_call().NAME()}' "
+                f"that is not returning a value.")
 
         self.variablesStack.append(Variable(
-            is_mutable = ctx.MUTABLE_TOKEN() is not None, 
-            name = name,
-            value = value
+            is_mutable=ctx.MUTABLE_TOKEN() is not None,
+            name=name,
+            value=value
         ))
-        
-    def visitFunction_call(self, ctx: jjParser.Function_callContext):   
+
+    def visitFunction_call(self, ctx: jjParser.Function_callContext):
         def error_bad_arg_count(func_name, expected, given):
-            print(f"ERROR: function '{func_name}' expected {expected} arguments, but {given} were given.")
+            print_semantic_error(f"function '{func_name}' expected {expected} arguments, but {given} were given.")
             exit(0)
-        
+
         fn_name = str(ctx.NAME())
         std_fn = self.get_std_fn(fn_name)
-        argumets_ctx = [child for child in ctx.children if isinstance(child, jjParser.ExpresionContext)]
-        argumets = [self.visitExpresion(child).get_value() for child in argumets_ctx] 
-        variable_args_names = [str(child.identifier().NAME()) if child.identifier() is not None else None for child in argumets_ctx]
+        arguments_ctx = [child for child in ctx.children if isinstance(child, jjParser.ExpresionContext)]
+        arguments = [self.visitExpresion(child).get_value() for child in arguments_ctx]
+        variable_args_names = [str(child.identifier().NAME()) if child.identifier() is not None else None for child in
+                               arguments_ctx]
 
         result = None
-        
+
         if std_fn is not None:
-            if isinstance(std_fn.arguments_count, VariadicArguments) or len(argumets) == std_fn.arguments_count:
-                std_fn.call(argumets, ctx)
+            if isinstance(std_fn.arguments_count, VariadicArguments) or len(arguments) == std_fn.arguments_count:
+                std_fn.call(arguments, ctx)
             else:
-                error_bad_arg_count(fn_name, std_fn.arguments_count, len(argumets))  
+                error_bad_arg_count(fn_name, std_fn.arguments_count, len(arguments))
         elif fn_name in self.functions:
             self.stack_start_block()
             func = self.functions[fn_name]
 
             if len(func.arguments) > 0:
-                if len(argumets) == len(func.arguments):
-                    for i in range(len(argumets)):
+                if len(arguments) == len(func.arguments):
+                    for i in range(len(arguments)):
                         if func.arguments[i].is_mutable and variable_args_names[i] is None:
-                            print(f"ERROR: can't pass expression as mutable argument to function '{fn_name}'.")
+                            print_semantic_error(f"can't pass expression as mutable argument to function '{fn_name}'.")
                             exit(1)
 
                         self.variablesStack.append(Variable(
-                            is_mutable = func.arguments[i].is_mutable,
-                            name = func.arguments[i].name,
-                            value = argumets[i]
+                            is_mutable=func.arguments[i].is_mutable,
+                            name=func.arguments[i].name,
+                            value=arguments[i]
                         ))
                 else:
-                    error_bad_arg_count(fn_name, len(func.arguments), len(argumets))
+                    error_bad_arg_count(fn_name, len(func.arguments), len(arguments))
 
             func_specializations = self.get_current_func_specializations(func)
             func_struct_block = func_specializations.body_block
@@ -142,7 +147,7 @@ class jjVisitor(jjParserVisitor):
 
             for i, arg in enumerate(func.arguments):
                 if arg.is_mutable:
-                    self.setVariableValue(variable_args_names[i], self.getVariableValue(arg.name), 1), 
+                    self.setVariableValue(variable_args_names[i], self.getVariableValue(arg.name), 1),
 
             self.stack_end_block()
 
@@ -159,26 +164,42 @@ class jjVisitor(jjParserVisitor):
     def visitAll_unary_operations(self, ctx: jjParser.All_unary_operationsContext):
         text = ctx.getText()
         match text:
-             case '!': return UnaryOperations.negate
-             case '-': return UnaryOperations.minus
-             case '+': return UnaryOperations.plus
+            case '!':
+                return UnaryOperations.negate
+            case '-':
+                return UnaryOperations.minus
+            case '+':
+                return UnaryOperations.plus
 
     def visitAll_binary_operations(self, ctx: jjParser.All_binary_operationsContext):
         text = ctx.getText()
         match text:
-            case '*': return (BinaryOperations.mul, 6)
-            case '/': return (BinaryOperations.div, 6)
-            case '%': return (BinaryOperations.mod, 6)
-            case '==': return (BinaryOperations.eq, 3)
-            case '!=': return (BinaryOperations.not_eq, 3)
-            case '<': return (BinaryOperations.less, 4)
-            case '>': return (BinaryOperations.more, 4)
-            case '<=': return (BinaryOperations.less_eq, 4)
-            case '>=': return (BinaryOperations.more_eq, 4)
-            case '||': return (BinaryOperations.or_fn, 1)
-            case '&&': return (BinaryOperations.and_fn, 2)
-            case '+': return (BinaryOperations.add, 5)
-            case '-': return (BinaryOperations.sub, 5)
+            case '*':
+                return BinaryOperations.mul, 6
+            case '/':
+                return BinaryOperations.div, 6
+            case '%':
+                return BinaryOperations.mod, 6
+            case '==':
+                return BinaryOperations.eq, 3
+            case '!=':
+                return BinaryOperations.not_eq, 3
+            case '<':
+                return BinaryOperations.less, 4
+            case '>':
+                return BinaryOperations.more, 4
+            case '<=':
+                return BinaryOperations.less_eq, 4
+            case '>=':
+                return BinaryOperations.more_eq, 4
+            case '||':
+                return BinaryOperations.or_fn, 1
+            case '&&':
+                return BinaryOperations.and_fn, 2
+            case '+':
+                return BinaryOperations.add, 5
+            case '-':
+                return BinaryOperations.sub, 5
 
     def visitExpresion_in_parenthesis(self, ctx: jjParser.Expresion_in_parenthesisContext):
         return AST(self.visitExpresion(ctx.expresion()))
@@ -188,9 +209,9 @@ class jjVisitor(jjParserVisitor):
             left = self.visitLeft_of_binary_operation(ctx.left_of_binary_operation())
             bin_op, prority = self.visitAll_binary_operations(ctx.all_binary_operations())
             right = self.visitExpresion(ctx.expresion())
-            
+
             return AST(left, (bin_op, prority, right))
-    
+
         unary = ctx.all_unary_operations()
         if unary is not None:
             value = self.visitExpresion(ctx.expresion()).get_value()
@@ -234,11 +255,12 @@ class jjVisitor(jjParserVisitor):
         name = str(ctx.NAME())
 
         if expr_ctx.function_call() is not None and value is None:
-            print(f"ERROR: Cacn't assign function '{expr_ctx.function_call().NAME()}' that returns nothing to variable '{name}'.")
+            print_semantic_error(
+                f"Can't assign function '{expr_ctx.function_call().NAME()}' that returns nothing to variable '{name}'.")
             exit(1)
-           
-        if(type(self.getVariableValue(name)) != type(value)):
-            print(f"ERROR: Variable '{name}' is not of type {type(value)}.")
+
+        if type(self.getVariableValue(name)) != type(value):
+            print_semantic_error(f"Variable '{name}' is not of type {type(value)}.")
             exit(1)
 
         self.setVariableValue(name, value, 1 if ctx.SCOPE_PARENT_TOKEN() is not None else 0)
@@ -257,7 +279,7 @@ class jjVisitor(jjParserVisitor):
 
     def visitFor_statement(self, ctx: jjParser.For_statementContext):
         self.stack_start_block()
-        
+
         self.visitInstruction_line(ctx.instruction_line(0))
         while self.visitInstruction_line(ctx.instruction_line(1)):
             self.visitStructural_block(ctx.structural_block())
@@ -276,7 +298,7 @@ class jjVisitor(jjParserVisitor):
     def visitCast_expression(self, ctx: jjParser.Cast_expressionContext):
         value = self.visitLeft_of_cast_expr(ctx.left_of_cast_expr())
 
-        if (isinstance(value, AST)):
+        if isinstance(value, AST):
             value = value.get_value()
 
         type_name = str(ctx.TYPE_NAME())
@@ -289,8 +311,8 @@ class jjVisitor(jjParserVisitor):
             return float(value)
         if type_name == token_name(jjParser.BOOL_TYPE):
             return bool(value)
-        
-        print("INTERNAL ERROR!")
+
+        print_semantic_error("INTERNAL ERROR!")
         exit(1)
 
     def visitFunction(self, ctx: jjParser.FunctionContext):

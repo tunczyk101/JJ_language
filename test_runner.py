@@ -17,13 +17,14 @@ class JJTests(unittest.TestCase):
         for program_name in self.program_names:
             with self.subTest(f"Testing '{program_name}'"):
                 print(f"Testing '{program_name}'")
-                out = subprocess.check_output(['python3.10', 'jj_interpreter.py',  TEST_PROGRAMS_PATH + os.path.sep + program_name])
-                
+                out = subprocess.check_output(
+                    ['python3.10', 'jj_interpreter.py', TEST_PROGRAMS_PATH + os.path.sep + program_name])
+
                 with open(TEST_RESULTS_PATH + os.path.sep + program_name + RESULT_SUFIX, "r") as f:
-                     expected_output = f.read()
-                
+                    expected_output = f.read()
+
                 self.assertEqual(expected_output, out.decode("utf-8"))
-        
+
 
 def get_all_files_ended_with(root_path: str, sufix: str):
     results = []
@@ -36,12 +37,8 @@ def get_all_files_ended_with(root_path: str, sufix: str):
     return results
 
 
-
-
-
 def suite():
     suite = unittest.TestSuite()
-
 
     programs_results = get_all_files_ended_with(TEST_RESULTS_PATH, RESULT_SUFIX)
     all_programs = get_all_files_ended_with(TEST_PROGRAMS_PATH, JJ_SUFIX)
@@ -49,11 +46,13 @@ def suite():
     programs_to_test = []
     for program_name in all_programs:
         if program_name + RESULT_SUFIX in programs_results:
+            print(program_name)
             programs_to_test.append(program_name)
 
     suite.addTest(JJTests(programs_to_test))
 
     return suite
+
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()

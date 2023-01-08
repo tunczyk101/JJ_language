@@ -10,19 +10,8 @@ def print_error(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
 
-def define_problem(token):
-    text = token.text
-
-    match text:
-        case "{":
-            return "Variable declaration error"
-        case "}":
-            return "Variable value error"
-        case "mut":
-            return "Missing \"let\""
-        case "<EOF>":
-            return "Reached end of file"
-
+def print_semantic_error(*args, **kwargs):
+    print("Semantic Error:", *args, **kwargs)
 
 
 class jjErrorListener(ErrorListener):
@@ -42,3 +31,18 @@ class jjErrorListener(ErrorListener):
                     # "\t\n", custom_msg,
                     "\t\n", msg)
         # print_error("Rule Stack: ", stack)
+
+
+def define_problem(token):
+    text = token.text
+
+    match text:
+        case "{":
+            return "Variable declaration error"
+        case "}":
+            return "Variable value error"
+        case "mut":
+            return "Missing \"let\""
+        case "<EOF>":
+            return "Reached end of file"
+
