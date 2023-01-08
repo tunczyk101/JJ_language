@@ -40,14 +40,13 @@ class jjListener(jjParserListener):
         self.logger.log(self.functions_list)
         self.logger.log(self.variables)
         if self.functions_list.get("main") is None:
-            print_semantic_error("Main is not defined")
+            print_semantic_error("Main is not defined", ctx.start.line, ctx.start.column)
             exit(0)
 
     # Enter a parse tree produced by jjParser#function.
     def enterFunction(self, ctx: jjParser.FunctionContext):
         self.logger.log("FUNC " + str(ctx.NAME()))
         name = str(ctx.NAME())
-        # self.logger.log(ctx. )
         self.statements.update({ctx: []})
 
         if self.functions_list.get(name) is None:
@@ -65,7 +64,7 @@ class jjListener(jjParserListener):
     def enterFunction_main(self, ctx: jjParser.Function_mainContext):
         self.logger.log("Main")
         if self.functions_list.get("main") is not None:
-            print_semantic_error("Multiple declarations of main function")
+            print_semantic_error("Multiple declarations of main function", ctx.start.line, ctx.start.column)
             exit(1)
         self.functions_list.update({"main": []})
         self.statements.update({ctx: []})
@@ -81,7 +80,7 @@ class jjListener(jjParserListener):
         curr_scope = list(self.statements.keys())[-1]
         name = str(ctx.NAME())
 
-        self.checkVariableExistence(name, curr_scope)
+        self.checkVariableExistence(name, curr_scope, ctx)
 
         self.variables.append(Variable(
             is_mutable=ctx.MUTABLE_TOKEN() is not None,
@@ -89,10 +88,10 @@ class jjListener(jjParserListener):
             scope=curr_scope
         ))
 
-    def checkVariableExistence(self, name, curr_scope):
+    def checkVariableExistence(self, name, curr_scope, ctx):
         for var in reversed(self.variables):
             if var.name == name and var.scope == curr_scope:
-                print_semantic_error("Variable " + name + " already exists")
+                print_semantic_error("Variable " + name + " already exists", ctx.start.line, ctx.start.column)
                 exit(0)
 
     # Enter a parse tree produced by jjParser#variable_declaration.
@@ -101,7 +100,7 @@ class jjListener(jjParserListener):
         name = str(ctx.NAME())
         curr_scope = list(self.statements.keys())[-1]
 
-        self.checkVariableExistence(name, curr_scope)
+        self.checkVariableExistence(name, curr_scope, ctx)
 
         self.variables.append(Variable(
             is_mutable=ctx.MUTABLE_TOKEN() is not None,
@@ -115,7 +114,7 @@ class jjListener(jjParserListener):
         self.logger.log("ENTER FUNC CALL  " + ctx.getText())
         name = str(ctx.NAME())
         if self.functions_list.get(name) is None and name not in STANDARD_FUNCTIONS:
-            print_semantic_error("Semantic error: Func " + name + " not defined")
+            print_semantic_error("Semantic error: Func " + name + " not defined", ctx.start.line, ctx.start.column)
             exit(0)
 
     # Enter a parse tree produced by jjParser#if_statement.
@@ -163,11 +162,11 @@ class jjListener(jjParserListener):
         for var in reversed(self.variables):
             if var.name == name:
                 if not var.is_mutable:
-                    print_semantic_error("Variable " + name + " is not mut")
+                    print_semantic_error("Variable " + name + " is not mut", ctx.start.line, ctx.start.column)
                     exit(0)
                 return
 
-        print_semantic_error(name + " is not defined")
+        print_semantic_error(name + " is not defined", ctx.start.line, ctx.start.column)
         exit(0)
 
     def enterIdentifier(self, ctx: jjParser.IdentifierContext):
@@ -177,7 +176,7 @@ class jjListener(jjParserListener):
             for var in self.variables:
                 if var.name == name:
                     return
-            print_semantic_error(name + " is not defined")
+            print_semantic_error(name + " is not defined", ctx.start.line, ctx.start.column)
             exit(0)
 
     def clear_scope_var(self, ctx):

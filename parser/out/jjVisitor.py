@@ -47,7 +47,7 @@ class jjVisitor(jjParserVisitor):
                     specialization.guard_block.expresion()).get_value():
                 return specialization
 
-    def getVariable(self, name, scope=0):
+    def getVariable(self, name, ctx, scope=0):
         for var in reversed(self.variablesStack):
             if var is None and scope > 0:
                 scope -= 1
@@ -55,14 +55,14 @@ class jjVisitor(jjParserVisitor):
             if scope == 0 and var is not None and var.name == name:
                 return var
 
-        print_semantic_error(f"variable '{name}' is not defined.")
+        print_semantic_error(f"variable '{name}' is not defined.", ctx.start.line, ctx.start.column)
         exit(0)
 
-    def getVariableValue(self, name, scope=0):
-        return self.getVariable(name, scope).value
+    def getVariableValue(self, name, ctx, scope=0):
+        return self.getVariable(name, ctx, scope).value
 
-    def setVariableValue(self, name, value, scope=0):
-        self.getVariable(name, scope).value = value
+    def setVariableValue(self, name, value, ctx, scope=0):
+        self.getVariable(name, ctx, scope).value = value
 
     def stack_start_block(self):
         self.variablesStack.append(None)
@@ -89,7 +89,7 @@ class jjVisitor(jjParserVisitor):
         if expr_ctx.function_call() is not None and value is None:
             print_semantic_error(
                 f"variable '{name}' can't be initialized with function '{expr_ctx.function_call().NAME()}' "
-                f"that is not returning a value.")
+                f"that is not returning a value.", ctx.start.line, ctx.start.column)
 
         self.variablesStack.append(Variable(
             is_mutable=ctx.MUTABLE_TOKEN() is not None,
@@ -99,7 +99,8 @@ class jjVisitor(jjParserVisitor):
 
     def visitFunction_call(self, ctx: jjParser.Function_callContext):
         def error_bad_arg_count(func_name, expected, given):
-            print_semantic_error(f"function '{func_name}' expected {expected} arguments, but {given} were given.")
+            print_semantic_error(f"function '{func_name}' expected {expected} arguments, but {given} were given.",
+                                 ctx.start.line, ctx.start.column)
             exit(0)
 
         fn_name = str(ctx.NAME())
@@ -124,7 +125,8 @@ class jjVisitor(jjParserVisitor):
                 if len(arguments) == len(func.arguments):
                     for i in range(len(arguments)):
                         if func.arguments[i].is_mutable and variable_args_names[i] is None:
-                            print_semantic_error(f"can't pass expression as mutable argument to function '{fn_name}'.")
+                            print_semantic_error(f"can't pass expression as mutable argument to function '{fn_name}'.",
+                                                 ctx.start.line, ctx.start.column)
                             exit(1)
 
                         self.variablesStack.append(Variable(
@@ -147,7 +149,7 @@ class jjVisitor(jjParserVisitor):
 
             for i, arg in enumerate(func.arguments):
                 if arg.is_mutable:
-                    self.setVariableValue(variable_args_names[i], self.getVariableValue(arg.name), 1),
+                    self.setVariableValue(variable_args_names[i], self.getVariableValue(arg.name, ctx), ctx, 1),
 
             self.stack_end_block()
 
@@ -245,7 +247,7 @@ class jjVisitor(jjParserVisitor):
     def visitIdentifier(self, ctx: jjParser.IdentifierContext):
         name = ctx.NAME()
         if name is not None:
-            return self.getVariableValue(str(name), 1 if ctx.SCOPE_PARENT_TOKEN() is not None else 0)
+            return self.getVariableValue(str(name), ctx, 1 if ctx.SCOPE_PARENT_TOKEN() is not None else 0)
 
         return self.visitValue(ctx.value())
 
@@ -256,14 +258,15 @@ class jjVisitor(jjParserVisitor):
 
         if expr_ctx.function_call() is not None and value is None:
             print_semantic_error(
-                f"Can't assign function '{expr_ctx.function_call().NAME()}' that returns nothing to variable '{name}'.")
+                f"Can't assign function '{expr_ctx.function_call().NAME()}' that returns nothing to variable '{name}'.",
+                ctx.start.line, ctx.start.column)
             exit(1)
 
-        if type(self.getVariableValue(name)) != type(value):
-            print_semantic_error(f"Variable '{name}' is not of type {type(value)}.")
+        if type(self.getVariableValue(name, ctx)) != type(value):
+            print_semantic_error(f"Variable '{name}' is not of type {type(value)}.", ctx.start.line, ctx.start.column)
             exit(1)
 
-        self.setVariableValue(name, value, 1 if ctx.SCOPE_PARENT_TOKEN() is not None else 0)
+        self.setVariableValue(name, value, ctx, 1 if ctx.SCOPE_PARENT_TOKEN() is not None else 0)
 
     def visitInstruction(self, ctx: jjParser.InstructionContext):
         expr = ctx.expresion()
@@ -312,7 +315,7 @@ class jjVisitor(jjParserVisitor):
         if type_name == token_name(jjParser.BOOL_TYPE):
             return bool(value)
 
-        print_semantic_error("INTERNAL ERROR!")
+        print_semantic_error("INTERNAL ERROR!", ctx.start.line, ctx.start.column)
         exit(1)
 
     def visitFunction(self, ctx: jjParser.FunctionContext):

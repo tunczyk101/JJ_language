@@ -3,15 +3,14 @@ import sys
 from antlr4 import Parser
 from antlr4.error.ErrorListener import ErrorListener
 
-from parser.out.jjParser import jjParser
-
 
 def print_error(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
 
-def print_semantic_error(*args, **kwargs):
-    print("Semantic Error:", *args, **kwargs)
+def print_semantic_error(msg: str, line: int, col: int):
+    print("Semantic Error:", msg)
+    print("line:", line, ", col:", col)
 
 
 class jjErrorListener(ErrorListener):
