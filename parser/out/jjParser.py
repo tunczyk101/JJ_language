@@ -131,22 +131,22 @@ class jjParser ( Parser ):
 
     sharedContextCache = PredictionContextCache()
 
-    literalNames = [ "<INVALID>", "'//'", "<INVALID>", "<INVALID>", "<INVALID>", 
-                     "<INVALID>", "<INVALID>", "'func'", "'main'", "'let'", 
-                     "'mut'", "';'", "','", "'{'", "'}'", "'('", "')'", 
-                     "<INVALID>", "'!'", "<INVALID>", "'='", "'returns'", 
-                     "'with'", "'when'", "'if'", "'else'", "'while'", "'for'", 
+    literalNames = [ "<INVALID>", "'//'", "<INVALID>", "<INVALID>", "<INVALID>",
+                     "<INVALID>", "<INVALID>", "'func'", "'main'", "'let'",
+                     "'mut'", "';'", "','", "'{'", "'}'", "'('", "')'",
+                     "<INVALID>", "'!'", "<INVALID>", "'='", "'returns'",
+                     "'with'", "'when'", "'if'", "'else'", "'while'", "'for'",
                      "'as'", "'^'", "<INVALID>", "'int'", "'float'", "'bool'" ]
 
-    symbolicNames = [ "<INVALID>", "COMMENT_START", "COMMENT", "WS", "NEW_LINE", 
-                      "NUMBER_TYPE", "BOOL", "FUNC_DECL", "MAIN_FUNC_NAME", 
-                      "VARIABLE_TOKEN", "MUTABLE_TOKEN", "END_OF_INSTRUCTION", 
-                      "COMMA_TOKEN", "BLOCK_BEGIN", "BLOCK_END", "PARENTHESES_BEGIN", 
-                      "PARENTHESES_END", "UNARY_OR_BINARY_OPERATIONS", "ONLY_UNARY_OPERATIONS", 
-                      "ONLY_BINARY_OPERATIONS", "ASSIGNMENT_TOKEN", "RETURN_DECL", 
-                      "WITH_DECL", "WHEN_DECL", "IF_DECL", "ELSE_DECL", 
-                      "WHILE_DECL", "FOR_DECL", "CAST_DECL", "SCOPE_PARENT_TOKEN", 
-                      "TYPE_NAME", "INT_TYPE", "FLOAT_TYPE", "BOOL_TYPE", 
+    symbolicNames = [ "<INVALID>", "COMMENT_START", "COMMENT", "WS", "NEW_LINE",
+                      "NUMBER_TYPE", "BOOL", "FUNC_DECL", "MAIN_FUNC_NAME",
+                      "VARIABLE_TOKEN", "MUTABLE_TOKEN", "END_OF_INSTRUCTION",
+                      "COMMA_TOKEN", "BLOCK_BEGIN", "BLOCK_END", "PARENTHESES_BEGIN",
+                      "PARENTHESES_END", "UNARY_OR_BINARY_OPERATIONS", "ONLY_UNARY_OPERATIONS",
+                      "ONLY_BINARY_OPERATIONS", "ASSIGNMENT_TOKEN", "RETURN_DECL",
+                      "WITH_DECL", "WHEN_DECL", "IF_DECL", "ELSE_DECL",
+                      "WHILE_DECL", "FOR_DECL", "CAST_DECL", "SCOPE_PARENT_TOKEN",
+                      "TYPE_NAME", "INT_TYPE", "FLOAT_TYPE", "BOOL_TYPE",
                       "NAME" ]
 
     RULE_prog = 0
@@ -183,15 +183,15 @@ class jjParser ( Parser ):
     RULE_for_statement = 31
     RULE_assignmnet_statement = 32
 
-    ruleNames =  [ "prog", "global_line", "function", "function_main", "optinal_function_blocks", 
-                   "argument_decl", "additional_arguments_decl", "arguments_block", 
-                   "structural_block", "return_block", "guard_block", "structural_line", 
-                   "variable_declaration", "instruction_line", "structural_line_instruction", 
-                   "statement", "instruction", "expresion_in_parenthesis", 
-                   "left_of_cast_expr", "cast_expression", "left_of_binary_operation", 
-                   "all_binary_operations", "all_unary_operations", "expresion", 
-                   "function_call", "identifier", "value", "if_statement_start", 
-                   "if_statement", "else_statement", "while_statement", 
+    ruleNames =  [ "prog", "global_line", "function", "function_main", "optinal_function_blocks",
+                   "argument_decl", "additional_arguments_decl", "arguments_block",
+                   "structural_block", "return_block", "guard_block", "structural_line",
+                   "variable_declaration", "instruction_line", "structural_line_instruction",
+                   "statement", "instruction", "expresion_in_parenthesis",
+                   "left_of_cast_expr", "cast_expression", "left_of_binary_operation",
+                   "all_binary_operations", "all_unary_operations", "expresion",
+                   "function_call", "identifier", "value", "if_statement_start",
+                   "if_statement", "else_statement", "while_statement",
                    "for_statement", "assignmnet_statement" ]
 
     EOF = Token.EOF
@@ -230,13 +230,16 @@ class jjParser ( Parser ):
     BOOL_TYPE=33
     NAME=34
 
-    def __init__(self, input:TokenStream, output:TextIO = sys.stdout):
+    def __init__(self, input:TokenStream, filename: str, output:TextIO = sys.stdout):
         super().__init__(input, output)
+        self.filename = filename
         self.checkVersion("4.11.1")
         self._interp = ParserATNSimulator(self, self.atn, self.decisionsToDFA, self.sharedContextCache)
         self._predicates = None
 
-
+    def get_filename(self):
+        # print(self.filename)
+        return self.filename
 
 
     class ProgContext(ParserRuleContext):
@@ -289,7 +292,7 @@ class jjParser ( Parser ):
             while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
                 if _alt==1:
                     self.state = 66
-                    self.global_line() 
+                    self.global_line()
                 self.state = 71
                 self._errHandler.sync(self)
                 _alt = self._interp.adaptivePredict(self._input,0,self._ctx)
@@ -873,7 +876,7 @@ class jjParser ( Parser ):
             while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
                 if _alt==1:
                     self.state = 142
-                    self.additional_arguments_decl() 
+                    self.additional_arguments_decl()
                 self.state = 147
                 self._errHandler.sync(self)
                 _alt = self._interp.adaptivePredict(self._input,19,self._ctx)
@@ -1142,7 +1145,7 @@ class jjParser ( Parser ):
             token = self._input.LA(1)
             if token in [5, 6, 9, 11, 13, 15, 17, 18, 24, 26, 27, 29, 34]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 173 
+                self.state = 173
                 self._errHandler.sync(self)
                 _alt = 1
                 while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
@@ -1152,7 +1155,7 @@ class jjParser ( Parser ):
 
                     else:
                         raise NoViableAltException(self)
-                    self.state = 175 
+                    self.state = 175
                     self._errHandler.sync(self)
                     _alt = self._interp.adaptivePredict(self._input,24,self._ctx)
 
