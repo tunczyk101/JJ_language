@@ -3,17 +3,17 @@ import collections
 from typing import Any
 from dataclasses import dataclass
 
-from .jjErrorListener import print_semantic_error
-
 if __name__ is not None and "." in __name__:
     from .jjParser import jjParser
     from .jjParserVisitor import jjParserVisitor
+    from .jjErrorListener import print_semantic_error
     from .operations import UnaryOperations, BinaryOperations
     from .ast import AST
     from .functions import Function, STANDARD_FUNCTIONS, VariadicArguments
 else:
     from jjParser import jjParser
     from jjParserVisitor import jjParserVisitor
+    from jjErrorListener import print_semantic_error
     from operations import UnaryOperations, BinaryOperations
     from ast import AST
     from functions import Function, STANDARD_FUNCTIONS, VariadicArguments

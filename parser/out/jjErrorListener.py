@@ -45,4 +45,3 @@ def define_problem(token):
             return "Missing \"let\""
         case "<EOF>":
             return "Reached end of file"
-

@@ -1,19 +1,19 @@
-import collections
 from dataclasses import dataclass
 from typing import Any
 
 from antlr4 import *
 
-from .jjErrorListener import print_semantic_error
-from .jjParserListener import jjParserListener
-
 if __name__ is not None and "." in __name__:
     from .logger import Logger
     from .jjParser import jjParser
+    from .jjErrorListener import print_semantic_error
+    from .jjParserListener import jjParserListener
     from .functions import STANDARD_FUNCTIONS
 else:
     from logger import Logger
     from jjParser import jjParser
+    from jjErrorListener import print_semantic_error
+    from jjParserListener import jjParserListener
     from functions import STANDARD_FUNCTIONS
 
 
@@ -64,7 +64,7 @@ class jjListener(jjParserListener):
     # Enter a parse tree produced by jjParser#function_main.
     def enterFunction_main(self, ctx: jjParser.Function_mainContext):
         self.logger.log("Main")
-        if self.functions_list.get("main") != None:
+        if self.functions_list.get("main") is not None:
             print_semantic_error("Multiple declarations of main function")
             exit(1)
         self.functions_list.update({"main": []})
@@ -122,10 +122,10 @@ class jjListener(jjParserListener):
     def enterIf_statement(self, ctx: jjParser.If_statementContext):
         self.statements.update({ctx: []})
 
-    def enterStructural_block(self, ctx:jjParser.Structural_blockContext):
+    def enterStructural_block(self, ctx: jjParser.Structural_blockContext):
         self.statements.update({ctx: []})
 
-    def exitStructural_block(self, ctx:jjParser.Structural_blockContext):
+    def exitStructural_block(self, ctx: jjParser.Structural_blockContext):
         self.clear_scope_var(ctx)
 
     # Exit a parse tree produced by jjParser#if_statement.
