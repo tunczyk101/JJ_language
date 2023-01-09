@@ -32,6 +32,8 @@ class jjVisitor(jjParserVisitor):
         super().__init__()
         self.variablesStack = collections.deque()
         self.functions = {}
+        self.FUNCTIONS_STACK_SIZE = 40
+        self.functions_stack_counter = 0
 
     def addFunction(self, ctx: jjParser.FunctionContext):
         func = Function.from_function_context(ctx)
@@ -102,6 +104,11 @@ class jjVisitor(jjParserVisitor):
             print_semantic_error(f"function '{func_name}' expected {expected} arguments, but {given} were given.")
             exit(0)
 
+        self.functions_stack_counter += 1
+        if self.functions_stack_counter > self.FUNCTIONS_STACK_SIZE:
+            print(f"Runtime Error: Function call stack overflow.")
+            exit(0)
+
         fn_name = str(ctx.NAME())
         std_fn = self.get_std_fn(fn_name)
         arguments_ctx = [child for child in ctx.children if isinstance(child, jjParser.ExpresionContext)]
@@ -150,6 +157,8 @@ class jjVisitor(jjParserVisitor):
                     self.setVariableValue(variable_args_names[i], self.getVariableValue(arg.name), 1),
 
             self.stack_end_block()
+
+        self.functions_stack_counter -= 1
 
         return result
 
