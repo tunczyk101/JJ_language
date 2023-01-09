@@ -1,0 +1,18 @@
+func factorial
+with x 
+returns x * factorial(x - 1)
+
+func factorial
+with x
+when x == 0 
+returns 1
+
+func main
+{
+    for(let mut i { 0 }; i < 10; i = i + 1)
+    {
+        println(factorial(i));
+    }
+}
+
+
