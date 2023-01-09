@@ -39,6 +39,21 @@ class jjVisitor(jjParserVisitor):
         func = Function.from_function_context(ctx)
 
         if func.name in self.functions:
+            parent = self.functions[func.name]
+
+            if len(func.arguments) != len(parent.arguments):
+                print_semantic_error(f"function '{func.name}' already defined with different number of arguments ({len(parent.arguments)}).")
+                exit(0)
+
+            if func.specializations[0].guard_block is None:
+                print_semantic_error(f"function '{func.name}' already defined.")
+                exit(0)
+
+            if not ((func.specializations[0].return_block is None and parent.specializations[0].return_block is None)
+                or (func.specializations[0].return_block is not None and parent.specializations[0].return_block is not None)):
+                print_semantic_error(f"function '{func.name}' already defined with different return type.")
+                exit(0)
+
             self.functions[func.name].specializations.append(func.specializations[0])
         else:
             self.functions.update({func.name: func})

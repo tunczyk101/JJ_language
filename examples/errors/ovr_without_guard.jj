@@ -1,0 +1,12 @@
+func f
+with x 
+returns x
+
+func f
+with x
+returns x * 2
+
+func main 
+{
+    f(1);
+}
