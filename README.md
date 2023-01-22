@@ -21,8 +21,8 @@ Aby osiągnąć cel skorzystano z idei znanej z programowania funkcyjnego – *F
     - println(1 as bool); &emsp; &emsp; ***true***
     - let mut x { 1 }; 
         x = 2.4 as int;\
-        println(x); &emsp;&emsp;&emsp;&emsp;&emsp;&ensp; ***2***\
-        println(x as float);&emsp;&emsp; &nbsp;***2.0***
+        println(x); &emsp;&emsp;&emsp; ***2***\
+        println(x as float);&emsp;&emsp; ***2.0***
 - Odwoływanie się do niezadeklarowanej zmiennej kończy się błędem
 ## Operatory
 -	Operatory równości: x != y oraz  x == y
