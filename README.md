@@ -10,11 +10,11 @@ Główny koncept języka to ułatwienie stosowania „Single exit-point rule” 
 Aby osiągnąć cel skorzystano z idei znanej z programowania funkcyjnego – Function Guards, która występuje w językach takich jak Haskell oraz Elixir.
 
 ## ZMIENNE
--Inicjalizowanie zmiennych:
+- Inicjalizowanie zmiennych:
     - Za pomocą słowa let, nazwy zmienner oraz {wartość zmiennej}
         Np.  	let a { 10 };
         let b { true };
-    -W ramach języka dostępne są typy:
+    - W ramach języka dostępne są typy:
         - int 	np. let a { 1 };
         - float	np. let b { 2.0 };
         - bool	np. let c { false };
@@ -23,11 +23,11 @@ Aby osiągnąć cel skorzystano z idei znanej z programowania funkcyjnego – Fu
     let e { 1.0 };		- zmienna niemutowalna
 - Silna typizacja – typ ustalany na podstawie formy wartości zmiennej w „{}” (jak w podpunkcie o dostępnych typach)
 - Możliwa konwersja typów za pomocą wyrażenia zmienna/wartość as typ
-    - println(1 as bool);		true
-    - let mut x { 1 };
-        x = 2.4 as int;
-        println(x);			2
-        println(x as float);		2.0
+    - println(1 as bool); &emsp; &emsp; true
+    - let mut x { 1 };\ 
+        x = 2.4 as int;\
+        println(x); &emsp;&emsp;&emsp; ***2***\
+        println(x as float);&emsp;&emsp; ***2.0***
 - Odwoływanie się do niezadeklarowanej zmiennej kończy się błędem
 ## OPERATORY
 •	Operatory równości: x != y oraz  x == y
