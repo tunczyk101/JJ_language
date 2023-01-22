@@ -4,8 +4,12 @@ func main
     x = 2.4 as int;
     println(x);
     
+    println(1 as int);
     println(1 as float);
     println(1 as bool);
     println(true as int);
     println(true as float);
+    println(true as bool);
+    
+    println(((true as bool) as int) as float);
 }

@@ -46,7 +46,6 @@ def suite():
     programs_to_test = []
     for program_name in all_programs:
         if program_name + RESULT_SUFIX in programs_results:
-            print(program_name)
             programs_to_test.append(program_name)
 
     suite.addTest(JJTests(programs_to_test))

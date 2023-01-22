@@ -32,11 +32,28 @@ class jjVisitor(jjParserVisitor):
         super().__init__()
         self.variablesStack = collections.deque()
         self.functions = {}
+        self.FUNCTIONS_STACK_SIZE = 40
+        self.functions_stack_counter = 0
 
     def addFunction(self, ctx: jjParser.FunctionContext):
         func = Function.from_function_context(ctx)
 
         if func.name in self.functions:
+            parent = self.functions[func.name]
+
+            if len(func.arguments) != len(parent.arguments):
+                print_semantic_error(f"function '{func.name}' already defined with different number of arguments ({len(parent.arguments)}).")
+                exit(0)
+
+            if func.specializations[0].guard_block is None:
+                print_semantic_error(f"function '{func.name}' already defined.")
+                exit(0)
+
+            if not ((func.specializations[0].return_block is None and parent.specializations[0].return_block is None)
+                or (func.specializations[0].return_block is not None and parent.specializations[0].return_block is not None)):
+                print_semantic_error(f"function '{func.name}' already defined with different return type.")
+                exit(0)
+
             self.functions[func.name].specializations.append(func.specializations[0])
         else:
             self.functions.update({func.name: func})
@@ -103,6 +120,11 @@ class jjVisitor(jjParserVisitor):
                                  ctx.start.line, ctx.start.column)
             exit(0)
 
+        self.functions_stack_counter += 1
+        if self.functions_stack_counter > self.FUNCTIONS_STACK_SIZE:
+            print(f"Runtime Error: Function call stack overflow.")
+            exit(0)
+
         fn_name = str(ctx.NAME())
         std_fn = self.get_std_fn(fn_name)
         arguments_ctx = [child for child in ctx.children if isinstance(child, jjParser.ExpresionContext)]
@@ -152,6 +174,8 @@ class jjVisitor(jjParserVisitor):
                     self.setVariableValue(variable_args_names[i], self.getVariableValue(arg.name, ctx), ctx, 1),
 
             self.stack_end_block()
+
+        self.functions_stack_counter -= 1
 
         return result
 

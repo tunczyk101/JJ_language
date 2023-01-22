@@ -1,0 +1,15 @@
+func f
+with x 
+returns x
+
+func f
+with x
+when x == 0
+{
+
+}
+
+func main 
+{
+    f(1);
+}
