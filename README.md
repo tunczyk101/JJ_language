@@ -24,7 +24,7 @@ Aby osiągnąć cel skorzystano z idei znanej z programowania funkcyjnego – Fu
 - Silna typizacja – typ ustalany na podstawie formy wartości zmiennej w „{}” (jak w podpunkcie o dostępnych typach)
 - Możliwa konwersja typów za pomocą wyrażenia zmienna/wartość as typ
     - println(1 as bool); &emsp; &emsp; true
-    - let mut x { 1 };\ 
+    - let mut x { 1 }; \ 
         x = 2.4 as int;\
         println(x); &emsp;&emsp;&emsp; ***2***\
         println(x as float);&emsp;&emsp; ***2.0***
