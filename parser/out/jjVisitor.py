@@ -42,26 +42,27 @@ class jjVisitor(jjParserVisitor):
             parent = self.functions[func.name]
 
             if len(func.arguments) != len(parent.arguments):
-                print_semantic_error(f"function '{func.name}' already defined with different number of arguments ({len(parent.arguments)}).")
+                print_semantic_error(f"function '{func.name}' already defined with different number of arguments ({len(parent.arguments)}).", ctx.start.line, ctx.start.column)
                 exit(0)
 
             if func.specializations[0].guard_block is None:
-                print_semantic_error(f"function '{func.name}' already defined.")
+                print_semantic_error(f"function '{func.name}' already defined.", ctx.start.line, ctx.start.column)
                 exit(0)
 
             if not ((func.specializations[0].return_block is None and parent.specializations[0].return_block is None)
-                or (func.specializations[0].return_block is not None and parent.specializations[0].return_block is not None)):
-                print_semantic_error(f"function '{func.name}' already defined with different return type.")
+                    or (func.specializations[0].return_block is not None and parent.specializations[0].return_block is not None)):
+                print_semantic_error(f"function '{func.name}' already defined with different return type.",
+                                     ctx.start.line, ctx.start.column)
                 exit(0)
 
             self.functions[func.name].specializations.append(func.specializations[0])
         else:
             self.functions.update({func.name: func})
 
-    def get_current_func_specializations(self, func: Function):
+    def get_current_func_specializations(self, func: Function, ctx):
         for specialization in reversed(func.specializations):
             if specialization.guard_block is None or self.visitExpresion(
-                    specialization.guard_block.expresion()).get_value():
+                    specialization.guard_block.expresion()).get_value(ctx):
                 return specialization
 
     def getVariable(self, name, ctx, scope=0):
@@ -72,7 +73,9 @@ class jjVisitor(jjParserVisitor):
             if scope == 0 and var is not None and var.name == name:
                 return var
 
-        print_semantic_error(f"variable '{name}' is not defined.", ctx.start.line, ctx.start.column)
+        print_semantic_error(
+            f"'{'variable ' + name + ' is not defined.' if not name == 'None' else 'it is required to use variable not expresion.'}'",
+            ctx.start.line, ctx.start.column)
         exit(0)
 
     def getVariableValue(self, name, ctx, scope=0):
@@ -101,7 +104,8 @@ class jjVisitor(jjParserVisitor):
     def visitVariable_declaration(self, ctx: jjParser.Variable_declarationContext):
         name = str(ctx.NAME())
         expr_ctx = ctx.expresion()
-        value = self.visitExpresion(expr_ctx).get_value()
+        # print("!!!!!!!!!!!!!!!!!!")
+        value = self.visitExpresion(expr_ctx).get_value(ctx)
 
         if expr_ctx.function_call() is not None and value is None:
             print_semantic_error(
@@ -128,7 +132,7 @@ class jjVisitor(jjParserVisitor):
         fn_name = str(ctx.NAME())
         std_fn = self.get_std_fn(fn_name)
         arguments_ctx = [child for child in ctx.children if isinstance(child, jjParser.ExpresionContext)]
-        arguments = [self.visitExpresion(child).get_value() for child in arguments_ctx]
+        arguments = [self.visitExpresion(child).get_value(ctx) for child in arguments_ctx]
         variable_args_names = [str(child.identifier().NAME()) if child.identifier() is not None else None for child in
                                arguments_ctx]
 
@@ -159,7 +163,7 @@ class jjVisitor(jjParserVisitor):
                 else:
                     error_bad_arg_count(fn_name, len(func.arguments), len(arguments))
 
-            func_specializations = self.get_current_func_specializations(func)
+            func_specializations = self.get_current_func_specializations(func, ctx)
             func_struct_block = func_specializations.body_block
             func_return_block = func_specializations.return_block
 
@@ -240,14 +244,14 @@ class jjVisitor(jjParserVisitor):
 
         unary = ctx.all_unary_operations()
         if unary is not None:
-            value = self.visitExpresion(ctx.expresion()).get_value()
+            value = self.visitExpresion(ctx.expresion()).get_value(ctx)
             value_after_op = type(value)(self.visitAll_unary_operations(unary)(value))
             return AST(value_after_op)
 
         return AST(super().visitExpresion(ctx))
 
     def visitIf_statement_start(self, ctx: jjParser.If_statement_startContext):
-        return self.visitExpresion_in_parenthesis(ctx.expresion_in_parenthesis()).get_value()
+        return self.visitExpresion_in_parenthesis(ctx.expresion_in_parenthesis()).get_value(ctx)
 
     def visitIf_statement(self, ctx: jjParser.If_statementContext):
         if self.visitIf_statement_start(ctx.if_statement_start()):
@@ -277,7 +281,7 @@ class jjVisitor(jjParserVisitor):
 
     def visitAssignmnet_statement(self, ctx: jjParser.Assignmnet_statementContext):
         expr_ctx = ctx.expresion()
-        value = self.visitExpresion(ctx.expresion()).get_value()
+        value = self.visitExpresion(ctx.expresion()).get_value(ctx)
         name = str(ctx.NAME())
 
         if expr_ctx.function_call() is not None and value is None:
@@ -295,7 +299,7 @@ class jjVisitor(jjParserVisitor):
     def visitInstruction(self, ctx: jjParser.InstructionContext):
         expr = ctx.expresion()
         if expr is not None:
-            return self.visitExpresion(expr).get_value()
+            return self.visitExpresion(expr).get_value(ctx)
         return super().visitInstruction(ctx)
 
     def visitInstruction_line(self, ctx: jjParser.Instruction_lineContext):
@@ -317,7 +321,7 @@ class jjVisitor(jjParserVisitor):
     def visitWhile_statement(self, ctx: jjParser.While_statementContext):
         self.stack_start_block()
 
-        while self.visitExpresion_in_parenthesis(ctx.expresion_in_parenthesis()).get_value():
+        while self.visitExpresion_in_parenthesis(ctx.expresion_in_parenthesis()).get_value(ctx):
             self.visitStructural_block(ctx.structural_block())
 
         self.stack_end_block()
@@ -326,7 +330,7 @@ class jjVisitor(jjParserVisitor):
         value = self.visitLeft_of_cast_expr(ctx.left_of_cast_expr())
 
         if isinstance(value, AST):
-            value = value.get_value()
+            value = value.get_value(ctx)
 
         type_name = str(ctx.TYPE_NAME())
 

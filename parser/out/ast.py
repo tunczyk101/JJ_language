@@ -18,7 +18,7 @@ class AST:
             else:
                 self.stack.append(x)
 
-    def get_value(self, args=None):
+    def get_value(self, ctx, args=None):
         if args is None:
             lhs = self.stack.pop(0)
             min_precedence = AST.INITIAL_PRECEDENCE
@@ -35,7 +35,7 @@ class AST:
             while len(self.stack) > 0 and self.stack[0][1] > priority:
                 rhs = self.get_value((rhs, priority))
 
-            self.check_type(lhs, rhs)
+            self.check_type(lhs, rhs, ctx)
 
             op_result = op(lhs, rhs)
             if isinstance(op_result, bool):
@@ -45,7 +45,9 @@ class AST:
 
         return lhs
 
-    def check_type(self, lhs, rhs):
+    def check_type(self, lhs, rhs, ctx):
         if type(lhs) != type(rhs):
-            print_semantic_error(f"Type mismatch in expression. Expected {type(lhs).__name__} but got {type(rhs).__name__}")
+            print_semantic_error(
+                f"Type mismatch in expression. Expected {type(lhs).__name__} but got {type(rhs).__name__}",
+                ctx.start.line, ctx.start.column)
             exit(1)

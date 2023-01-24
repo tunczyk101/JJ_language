@@ -77,11 +77,11 @@ Aby osiągnąć cel skorzystano z idei znanej z programowania funkcyjnego – *F
         with x 
         returns 0
         ```
--	Można wielokrotnie deklarować tę samą funkcję, każda następna re-deklaracja nadpisuje sposób działania funkcji jedynie dla argumentów dla których jest zdefiniowana, dla pozostałych obowiązuje jedna z wcześniejszych wersji.
+-	Można wielokrotnie deklarować tę samą funkcję, każda następna re-deklaracja nadpisuje sposób działania funkcji jedynie
+dla argumentów dla których jest zdefiniowana, dla pozostałych obowiązuje jedna z wcześniejszych wersji.
 -	Zgodnie z ideą języka funkcje powinny być tworzone od najogólniejszych przypadków a kończąc na szczególnych. Funkcja domyślna ma występować w kodzie jako pierwsza deklaracja danej funkcji.
--	Przykłady
-    
-        ```
+- Przykłady:
+    ```
         func fib                                // dunkcja domyślna
         with x 
         returns 0
@@ -100,32 +100,31 @@ Aby osiągnąć cel skorzystano z idei znanej z programowania funkcyjnego – *F
         with x
         when x == 1
         returns 1                               // zwracanie wartości
-        ```
 
-        W powyższym przypadku dla x > 1 wykona się podstawowa wersja funkcji, natomiast dla x == 1 nadpisujemy dwukrotnie funkcję fib. Ostatecznie fib(1) zwróci wartość 1 – wykona ostatnią ze zdefiniowanych wersji.
-        ```
-            func func_with_flows                                // definicja funkcji
-        { 
-            let xd { 123 }; 
-            if( xd > 10 )
-            {
-                println(xd); 
-            }                                               // blok operacji
-        
-            mut let mutable_var { 1 }; 
-            while( mutable_var < 10 * xd ) 
-            {
-                mutable_var = mutable_var * xd;
-            }
-        
-            for( mut let i = 0; i < 0; i = i + 1 )
-            {
-                mutable_var = mutable_var - xd;
-            }
+     ```
+  W powyższym przypadku dla x > 1 wykona się podstawowa wersja funkcji, natomiast dla x == 1 nadpisujemy dwukrotnie funkcję fib. Ostatecznie fib(1) zwróci wartość 1 – wykona ostatnią ze zdefiniowanych wersji.
+    ```
+    func func_with_flows                                // definicja funkcji
+    { 
+        let xd { 123 }; 
+        if( xd > 10 )
+        {
+             println(xd);
+        }                                               // blok operacji
+            
+        mut let mutable_var { 1 }; 
+        while( mutable_var < 10 * xd ) 
+        {
+            mutable_var = mutable_var * xd;
         }
-        ```
-
-        Jak widać porównując powyższe przykłady każdy z bloków funkcji występujących po deklaracji można pominąć.
+            
+        for( mut let i = 0; i < 0; i = i + 1 )
+        {
+            mutable_var = mutable_var - xd;
+        }
+    }
+    ```
+  Jak widać porównując powyższe przykłady każdy z bloków funkcji występujących po deklaracji można pominąć.
 
 ## Funkcja ```main```
 -	Funkcja podstawowa, która musi się znajdować w każdym pliku, jej nazwa to *main*. Funkcja służy jako punkt wyjścia do wykonywania programu.

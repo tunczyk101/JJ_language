@@ -21,26 +21,41 @@ class jjErrorListener(ErrorListener):
 
         stack = (Parser(recognizer)).getRuleInvocationStack()
         stack.reverse()
-        # custom_msg = define_problem(offendingSymbol)
+        print(stack)
+        print(offendingSymbol)
+        print(msg)
+        print(e)
+        custom_msg = define_problem(msg, offendingSymbol.text)
 
         print_error("Syntax Error!")
         print_error("\tFile: ", recognizer.filename)
         print_error("\tToken ", "\"", offendingSymbol.text, "\"",
                     " line: ", line, ", column: ", column,
-                    # "\t\n", custom_msg,
-                    "\t\n", msg)
+                    "\t\n", custom_msg,
+                    "\t\n", msg
+                    )
+        exit(1);
         # print_error("Rule Stack: ", stack)
 
 
-def define_problem(token):
-    text = token.text
-
+def define_problem(text, token):
     match text:
-        case "{":
-            return "Variable declaration error"
-        case "}":
-            return "Variable value error"
-        case "mut":
-            return "Missing \"let\""
-        case "<EOF>":
-            return "Reached end of file"
+        case "mismatched input '{' expecting {'mut', NAME}" | "missing NAME at '{'":
+            return "Variable name needed"
+        case "mismatched input '}' expecting {NUMBER_TYPE, BOOL, '(', UNARY_OR_BINARY_OPERATIONS, '!', '^', NAME}":
+            return "Variable needs value"
+
+    if "mismatched input" in text or "extraneous input" in text:
+        miss = ""
+        l = len(text) - 2
+        while text[l] != "'" or l < 7:
+            miss = text[l] + miss
+            l -= 1
+        return "missing " + miss
+
+    temp = text[:len(text) - len(" '' at" + token)]
+
+    if "missing" in temp:
+        return temp
+
+    return ""
