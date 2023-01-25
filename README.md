@@ -62,21 +62,22 @@ Aby osiągnąć cel skorzystano z idei znanej z programowania funkcyjnego – *F
     zmiennej użyć słowa ```mut```.\
     Przykład
 
-        ```
+
         func add
         with mut x
         {
                     x = x + 2; 
         }
-        ```
+
+
 -	Wymagana jest domyślna wersja funkcji\
     np.
 
-        ```
+
         func fib 
         with x 
         returns 0
-        ```
+
 -	Można wielokrotnie deklarować tę samą funkcję, każda następna re-deklaracja nadpisuje sposób działania funkcji jedynie
 dla argumentów dla których jest zdefiniowana, dla pozostałych obowiązuje jedna z wcześniejszych wersji.
 -	Zgodnie z ideą języka funkcje powinny być tworzone od najogólniejszych przypadków a kończąc na szczególnych. Funkcja domyślna ma występować w kodzie jako pierwsza deklaracja danej funkcji.
